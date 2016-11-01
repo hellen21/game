@@ -1,0 +1,102 @@
+package cr.fi.grupomutual.website.entities;
+
+import java.util.ArrayList;
+/**
+ * Class to map header response data from the web service 
+ * @author hcampos-as Avantica Technologies
+ */
+public class ItemMenus {
+
+	private String parentSection;
+	private String code;
+	private String title;
+	private String status;
+	private String sectionType;
+	private String url;
+	private boolean notBody;
+	private ArrayList<ItemMenus> subMenus;
+
+	public ItemMenus(String parentSection, String code, String title, String status, String sectionType, String url, boolean notBody) {
+		super();
+		this.parentSection = parentSection;
+		this.code = code;
+		this.notBody= notBody;
+		this.title = title;
+		this.status = status;
+		this.url= url;
+		this.sectionType = sectionType;
+		this.subMenus = new ArrayList<ItemMenus>();
+	
+	}
+
+	public ArrayList<ItemMenus> getSubMenus() {
+		return subMenus;
+	}
+
+	public void setSubMenus(ItemMenus subMenus) {
+		this.subMenus.add(subMenus);
+	}
+	
+	
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public void setParentSection(String parentSection) {
+		this.parentSection = parentSection;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public void setSectionType(String sectionType) {
+		this.sectionType = sectionType;
+	}
+
+	public void setNotBody(boolean notBody) {
+		this.notBody = notBody;
+	}
+
+	public void setSubMenus(ArrayList<ItemMenus> subMenus) {
+		this.subMenus = subMenus;
+	}
+
+	public boolean isNotBody() {
+		return notBody;
+	}
+
+	public String getParentSection() {
+		return parentSection;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public String getSectionType() {
+		return sectionType;
+	}
+
+}

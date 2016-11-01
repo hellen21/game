@@ -1,0 +1,41 @@
+package cr.fi.grupomutual.website.entities;
+/**
+ * Class to map consult exchange rate response data from the web service 
+ * @author hcampos-as Avantica Technologies
+ */
+public class Rate {
+
+	
+	private String ammountSell;
+	private String ammountBuy;
+	
+	
+	
+	public Rate(RateChange rc) {
+		super();
+		
+		this.ammountSell = rc.getConsulExchangeRateMsjRespType().getExchangeRate().getAmmountSell();
+		this.ammountBuy = rc.getConsulExchangeRateMsjRespType().getExchangeRate().getAmmountBuy();
+	}
+
+	public String getAmmountSell() {
+		return ammountSell;
+	}
+
+	public String getAmmountBuy() {
+		return ammountBuy;
+	}
+	
+	public Rate() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public void setAmmountSell(String ammountSell) {
+		this.ammountSell = ammountSell;
+	}
+
+	public void setAmmountBuy(String ammountBuy) {
+		this.ammountBuy = ammountBuy;
+	}
+	
+}

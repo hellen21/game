@@ -1,0 +1,78 @@
+# Home Page Title
+label.home.title = Grupo Mutual Sitio Web
+
+# Header Custom Texts
+label.header.buyText = $USD Compra
+label.header.sellText = $USD Venta
+
+# Main Menu Static Items
+label.menu.lastItem = Contáctenos
+label.menu.penultimateItem = Oficinas
+
+
+# Footer Left Links Text
+label.footer.leftOne = Información Financiera
+label.footer.leftTwo = Gobierno Corporativo
+label.footer.leftThree = Memoria Anual
+label.footer.leftFour = Ley 8201
+label.footer.MutualBeneficios= Mutual Beneficios
+
+# Footer Right Links Text
+label.footer.rightOne = Inicio
+label.footer.rightTwo = Mapa del Sitio
+label.footer.rightThree = Contáctenos
+
+# Footer Center Links Text
+label.footer.centerOne = Grupo Mutual® 2016.
+label.footer.centerTwo = Todos los derechos reservados.
+
+# Contact Us Page Custom Texts
+label.contactus.title = Contáctenos
+label.contactus.subtitle = Comuníquese con Nosotros
+label.contactus.description = Escríbanos sus comentarios a través de este sencillo formulario. (Todos los espacios son obligatorios)
+
+#Message Contact Thanks
+label.contactus.titlePage = Contáctenos
+label.contactus.thanks = ¡Muchas Gracias!
+label.contactus.confirm.mjs=  Su mensaje ha sido enviado con éxito. Si desea enviar un nuevo mensaje, por favor haga click en el botón "Nuevo mensaje".
+label.contactus.confirm.msj2= Estamos para servirle.
+
+#SiteMap texts
+label.sitemap.title = Mapa del Sitio
+label.nearme.locationPickerListTitle=Seg�n mi Ubicación Actual
+label.nearme.province=Provincia
+label.nearme.canton=Cantón
+label.nearme.district=Distrito
+label.nearme.regionPickerListTitle=Localizar por Región
+label.nearme.back=Atrás
+
+#links login
+label.login.study= https://mutualempresarial.fi.cr/estudiosdigitales/
+label.login.colegiaturas= https://mutualempresarial.fi.cr/colegiaturas/
+
+#link footer
+link.footer.facebook=https://www.facebook.com/GrupoMutual
+
+#Mutual Benefits
+label.combobox.provincia= Seleccionar Provincia
+label.combobox.categoria= Seleccionar por Categoría
+
+#text combobox Contact Area de trabajo
+label.contact.title=\u00c1rea de Trabajo
+label.contact.item1=Ahorro e Inversión
+label.contact.item2=Cobros
+label.contact.item3=Contraloria de Servicios
+label.contact.item4=Prestamos
+label.contact.item5=Tarjetas
+label.contact.item6=Recursos Humanos
+label.contact.item7=Mutual en Línea
+
+label.login.enter=Ingresar
+
+label.contact.CodeIncorrect=Código Incorrecto
+
+label.nearme.errorGetLocation= No se ha obtenido la Ubicación Actual
+
+
+
+label.version.number="2.2.6"

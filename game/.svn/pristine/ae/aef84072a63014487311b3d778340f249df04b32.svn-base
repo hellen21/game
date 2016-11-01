@@ -1,0 +1,95 @@
+package cr.fi.grupomutual.website.ws;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.web.client.RestTemplate;
+
+import cr.fi.grupomutual.website.entities.ContactResponse;
+import cr.fi.grupomutual.website.entities.HelpUsWsResponse;
+import cr.fi.grupomutual.website.entities.JobArea;
+import cr.fi.grupomutual.website.utilities.WsClientUtilities;
+import cr.fi.grupomutual.website.utilities.WsClientUtilitiesImpl;
+
+public class ContactWsClientImpl implements ContantWsClient {
+	
+	private WsClientUtilities wsClientUtilities = new WsClientUtilitiesImpl();
+	@Value("${mutualapp.wserviceurl}")
+	private String WS_SERVICES_URL;
+	
+	protected static final String CONSULT_TYPE_CONTACT = "ConsultarContactoMsjSolTipo"; 
+	protected static final String SEND_NOTIFICATION = "EnvioNotificacionMsjSolTipo"; 
+	protected static final String NAMESPACES = "";
+	
+	@Value("${mutualapp.endPointSection}")
+	protected String END_POINT_SECTION;
+
+	private HttpEntity<String> restRequest;
+	
+	@Autowired
+	private RestTemplate restRequestTemplate;
+	private String finalWsUrl;
+	
+	public ContactResponse consultContact() throws RuntimeException{
+		
+		finalWsUrl = WS_SERVICES_URL + END_POINT_SECTION; 
+
+		String jsonStringRequest= wsClientUtilities.buildJsonStringRequest(CONSULT_TYPE_CONTACT,NAMESPACES,"");
+		
+		jsonStringRequest = jsonStringRequest.substring(0, jsonStringRequest.length()-1);
+		jsonStringRequest += "}}";
+		
+		restRequest= wsClientUtilities.setRequestHeader(finalWsUrl, jsonStringRequest);
+		ContactResponse response= restRequestTemplate.postForObject(finalWsUrl, restRequest, ContactResponse.class);
+		return response;		
+		
+	}
+	
+	public boolean sendComments(String name, String comments, JobArea emails) throws RuntimeException {
+
+		finalWsUrl = WS_SERVICES_URL + END_POINT_SECTION;
+		List<String> emailsList = emails.getEmails();
+		
+		String emailListJsonValue = "\"ListaCorreo\": \"{email}\"";
+		String emailListJsonBody = null; 
+		if(emailsList!=null){
+
+			StringBuilder emailListJsonBuilder = new StringBuilder(); 
+			for(String emailValue : emailsList){
+				emailListJsonValue = emailListJsonValue.replace("{email}", emailValue);
+				emailListJsonBuilder.append(emailListJsonValue);
+			}
+			
+			emailListJsonBody = ","+emailListJsonBuilder.toString();
+		}
+		else{
+			emailListJsonBody="";
+		}
+		
+		String jsonStringRequest = wsClientUtilities.buildJsonStringRequest(SEND_NOTIFICATION, NAMESPACES,"");
+		jsonStringRequest += "\"EnvioNotificacion\": {"
+								+"\"CodigoOperacion\": \"AYUDENOS_A_MEJORAR\" ,"
+								+"\"CamposReemplazar\":[ {"
+									+"\"Campo\": \"NOMBRE\" ,"
+									+"\"Valor\": \"" + name + "\" },"
+								+"{"
+									+"\"Campo\": \"COMENTARIOS\" ,"
+									+"\"Valor\": \"" + comments + "\" }"
+											+ "]"
+								+ emailListJsonBody
+								+ "}"
+								+"}}";
+	      
+		restRequest = wsClientUtilities.setRequestHeader(finalWsUrl, jsonStringRequest);
+        
+		HelpUsWsResponse responseData = restRequestTemplate.postForObject(finalWsUrl, restRequest, HelpUsWsResponse.class);
+		
+		//CabeceraRespDuticom header= responseData.getHelpUsResponse().getCabeceraRespDuticom();
+		boolean isRequestStatusOk=true;
+	
+		return isRequestStatusOk;		
+	}
+	
+}

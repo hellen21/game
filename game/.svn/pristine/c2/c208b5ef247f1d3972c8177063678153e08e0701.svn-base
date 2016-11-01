@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head>
+
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<!-- ===========STYLES=========== -->
+<div th:include="layouts/styles" th:remove="tag">...</div>
+
+<link th:href="@{/css/template.css}" rel="stylesheet" media="screen" />
+
+<style type="text/css">
+.bodyContainer {
+	position: relative;
+}
+
+footer {
+	display: block;
+}
+</style>
+
+<title th:text="#{label.sitemap.title}"></title>
+
+</head>
+<body>
+
+	<!-- ===========HEADER=========== -->
+	<div th:include="layouts/header" th:remove="tag"></div>
+
+	<div class="container bodyContainer " id="error">
+		<ul class="sitemap">
+			<li><a title="" href="">Home</a>
+				<ul>
+					<li><a title="" href="">test</a></li>
+					<li><a title="" href="">Becoming A Centre</a></li>
+					<li><a title="" href="">Qualifications</a></li>
+				</ul></li>
+			<li><a title="" href="">About Us</a>
+				<ul>
+					<li><a title="" href="">What We Do</a></li>
+					<li><a title="" href="">Board of Trustees</a></li>
+					<li><a title="" href="">Job Vacancies</a></li>
+				</ul></li>
+			<li><a title="" href="">Contact Us</a>
+				<ul>
+					<li><a title="" href="">Staff</a></li>
+					<li><a title="" href="">Map and Location</a></li>
+				</ul></li>
+			<li><a title="" href="">News</a>
+				<ul>
+					<li><a title="" href="">News Archive</a></li>
+					<li><a title="" href="">Latest News</a></li>
+				</ul></li>
+
+		</ul>
+	</div>
+
+	<!-- ===========FOOTER=========== -->
+	<div th:include="layouts/footer" th:remove="tag"></div>
+	<!-- ===========SCRIPTS=========== -->
+	<div th:include="layouts/scripts" th:remove="tag"></div>
+
+</body>
+
+<script type="text/javascript" th:inline="javascript">
+	
+	
+</script>
+</html>

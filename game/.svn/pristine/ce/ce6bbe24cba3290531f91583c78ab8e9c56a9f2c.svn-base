@@ -1,0 +1,47 @@
+package cr.fi.grupomutual.website.entities;
+/**
+ * Class to map header response data from the web service 
+ * @author hcampos-as Avantica Technologies
+ */
+public class Images {
+
+	private String name;
+	private String description;
+	private String direction;
+	private int index;
+	
+	public Images(String name, String description, String direction, int index) {
+		super();
+		this.name = name;
+		this.description = description;
+		this.direction = direction;
+		this.index = index;
+	}
+	
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getDirection() {
+		return direction;
+	}
+	public void setDirection(String direction) {
+		this.direction = direction;
+	}
+	public int getIndex() {
+		return index;
+	}
+	public void setIndex(int index) {
+		this.index = index;
+	}
+	
+}

@@ -1,0 +1,70 @@
+package cr.fi.grupomutual.website.entities;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class CasillaItem {
+	@JsonProperty("data")
+	private Data data;
+
+	public Data getData() {
+		return data;
+	}
+
+	public void setData(Data data) {
+		this.data = data;
+	}
+
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	public static class Data {
+		// @JsonIgnoreProperties("title")
+		// private String title;
+
+		@JsonIgnoreProperties("sectionTitle")
+		private String sectionTitle;
+		@JsonIgnoreProperties("description")
+		private String description;
+		@JsonIgnoreProperties("hyperlink")
+		private String hyperlink;
+		@JsonIgnoreProperties("imageUrl")
+		private String imageUrl;
+
+	
+
+		public String getSectionTitle() {
+			return sectionTitle;
+		}
+
+		public void setSectionTitle(String sectionTitle) {
+			this.sectionTitle = sectionTitle;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public String getHyperlink() {
+			return hyperlink;
+		}
+
+		public void setHyperlink(String hyperlink) {
+			this.hyperlink = hyperlink;
+		}
+
+		public String getImageUrl() {
+			return imageUrl;
+		}
+
+		public void setImageUrl(String imageUrl) {
+			this.imageUrl = imageUrl;
+		}
+
+	}
+
+}

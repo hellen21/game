@@ -1,0 +1,32 @@
+package cr.fi.grupomutual.website.services;
+
+import java.util.List;
+
+import cr.fi.grupomutual.website.entities.PromotionsWsResponse.PromotionResponse.Promotion;
+import cr.fi.grupomutual.website.entities.locations.Canton;
+import cr.fi.grupomutual.website.entities.locations.District;
+import cr.fi.grupomutual.website.entities.locations.Province;
+import cr.fi.grupomutual.website.entities.locations.Category.ConsultarCategoriasPuntoDeInteresMsjRespTipo.ListaCategoriaPuntoInteres;
+import cr.fi.grupomutual.website.entities.locations.InterestPoints.ConsultarPuntosDeInteresMsjRespTipo.ListaPuntoInteres;
+
+public interface NearMeService {
+	public Canton getCantonsData(String provinceId);
+
+	public District getDistrictsData(String cantonId, String provinceId);
+
+	public List<ListaPuntoInteres> getInterestPoints(String latitude,
+			String longitude);
+
+	public List<ListaPuntoInteres> getInterestPoints(String provinceId,
+			String cantonId, String districtId);
+
+	public List<ListaPuntoInteres> getPromotions(String latitude,
+			String longitude);
+
+	public Province getProvincesData();
+
+	public List<ListaCategoriaPuntoInteres> getCategoriesData();
+	
+	public List<ListaPuntoInteres> getMutualBenefict();
+	public List<Promotion> getPromotions() throws RuntimeException;
+}

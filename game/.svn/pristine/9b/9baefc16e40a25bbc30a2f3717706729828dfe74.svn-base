@@ -1,0 +1,58 @@
+package cr.fi.grupomutual.website.entities;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+/**
+ * Class to map the rate change of current day from the web service
+ * 
+ * @author hcampos-as Avantica Technologies
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class RateChange {
+
+	@JsonProperty("ConsultarTasaCambioMsjRespTipo")
+	private ConsulExchangeRateMsjRespType consulExchangeRateMsjRespType;
+
+	public ConsulExchangeRateMsjRespType getConsulExchangeRateMsjRespType() {
+		return consulExchangeRateMsjRespType;
+	}
+
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	public static class ConsulExchangeRateMsjRespType extends HeaderResponse {
+		
+		@JsonProperty("TasaCambio")
+		private ExchangeRate exchangeRate;
+
+		public ExchangeRate getExchangeRate() {
+			return exchangeRate;
+		}
+
+		public void setExchangeRate(ExchangeRate exchangeRate) {
+			this.exchangeRate = exchangeRate;
+		}
+
+		@JsonIgnoreProperties(ignoreUnknown = true)
+		public static class ExchangeRate {
+
+			@JsonProperty("montoCompra")
+			private String ammountBuy;
+			@JsonProperty("montoVenta")
+			private String ammountSell;
+			public String getAmmountBuy() {
+				return ammountBuy;
+			}
+			public void setAmmountBuy(String ammountBuy) {
+				this.ammountBuy = ammountBuy;
+			}
+			public String getAmmountSell() {
+				return ammountSell;
+			}
+			public void setAmmountSell(String ammountSell) {
+				this.ammountSell = ammountSell;
+			}
+
+		
+		}
+	}
+}

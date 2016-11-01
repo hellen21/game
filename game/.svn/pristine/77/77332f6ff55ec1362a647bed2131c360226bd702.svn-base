@@ -1,0 +1,365 @@
+footer {
+	display: none;
+}
+
+strong {
+	margin-bottom: 20px;
+	margin-top: 20px;
+}
+
+.arrowIndicatorClose img {
+	height: 21px;
+	position: relative;
+	float: right;
+	margin-right: -13px;
+	cursor:pointer;
+}
+
+.container.containerTemplete p:fristChild {
+	line-height: 25px;
+}
+
+#mediumAccordion {
+	background: RGB(235, 235, 235);
+}
+
+.menuContainer ul, ol {
+	text-align: justify;
+	margin-left: 0px;
+	font-size: 12px;
+}
+
+.largeMenu label {
+	text-align: initial;
+}
+
+.menuDescription {
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.containerTemplete {
+	overflow: auto;
+	padding: 15px;
+	line-height: 20px;
+	background: white;
+}
+
+
+.containerTemplete ul, ol {
+	margin-top: 10px;
+	font-size: 12px;
+	margin-bottom: 10px;
+}
+.containerTemplete .internMenu{	
+	 width: 100% !important;
+}
+p {
+	font-size: 14px;
+	line-height: 30px;
+}
+
+.carouselContainer {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.bodyContainer .bodyContainer {
+	background: transparent !important;
+}
+
+p img {
+	width: 100%;
+	margin-bottom: 10px;
+	height: auto;
+}
+
+.panel label {
+	padding-top: 14px;
+}
+
+.menuContainer {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.menuContainer p.menuDescription {
+	line-height: 18px !important;
+}
+
+.containerTemplete .container.carouselFooter {
+	padding-left: 0px;
+	padding-right: 0px;
+	overflow: auto;
+	height: 85px;
+}
+
+.containerTemplete .carouselFooter, .containerTemplete .contentFooter {
+	width: auto;
+	padding-top: 0px;
+	margin-bottom: 15px;
+}
+
+.panel label {
+	margin-left: 10px;
+}
+
+.colorGrayFooter {
+	height: 85px;
+}
+
+.wrapper_bu {
+	top: 22px;
+}
+
+@media only screen and (min-width : 480px) and (max-width : 542px) {
+	span.glyphicons.iconPlus.link {
+		top: -65px;
+	}
+}
+
+@media only screen and (min-width : 480px) and (max-width : 767px) {
+	span.glyphicons.circle_plus.iconPlus {
+		padding-right: 8px;
+		padding-top: 10px;
+	}
+	span.glyphicons.iconPlus.circle_minus {
+		padding-right: 7px;
+		padding-left: 0px;
+		padding-top: 0px;
+		top: 10px;
+	}
+	.containerTemplete .container.carouselFooter {
+		height: 105px;
+	}
+	.arrowIndicatorClose img {
+		margin-right: -33px;
+	}
+	.panel label {
+		padding-top: 18px;
+	}
+	div .accordion-toggle {
+		margin-bottom: 0px;
+		height: 60px;
+		box-shadow: rgba(222, 219, 219, 0.701961) 3px 3px 3px inset,
+			rgba(0, 0, 0, 0.0980392) -2px -2px 3px inset,
+			rgba(0, 0, 0, 0.0980392) 2px 2px 10px;
+	}
+	.containerTemplete .panel .glyphicons {
+		padding-bottom: 30px;
+	}
+	.colorGrayFooter {
+		height: 97px;
+	}
+	.wrapper_bu {
+		top: 24px;
+	}
+}
+
+@media only screen and (min-width : 768px) and (max-width : 991px) {
+	.container.containerTemplete {
+		margin-left: 2%;
+		margin-right: 2%;
+		width: auto;
+		background-color: white;
+		padding-right: 30px;
+		padding-left: 30px;
+		display: block;
+		border-radius: 10px;
+		margin-top: 11px;
+		margin-bottom: 30px;
+		padding-top: 20px;
+	}
+	.carouselContainer {
+		display: block;
+		padding-top: 20px;
+		padding-bottom: 20px;
+	}
+	.arrowIndicatorClose img {
+		margin-right: -40px;
+	}
+}
+
+@media only screen and (max-width: 1199px) and (min-width: 768px) {
+	.collapseDiv div {
+		background-color: white;
+		padding: 40px 35px 40px 35px;
+		position: relative;
+	}
+	.containerTemplete .holder_bu {
+		height: 80px;
+		width: 110px;
+		margin-left: 30px;
+	}
+	.containerTemplete {
+		overflow: auto;
+		line-height: 20px;
+		margin-left: 2%;
+		margin-right: 2%;
+		width: auto;
+		background-color: white;
+		padding-right: 30px;
+		padding-left: 30px;
+		display: block;
+		border-radius: 10px;
+		margin-top: 11px;
+		margin-bottom: 11px;
+		padding-top: 20px;
+	}
+	.carouselContainer {
+		display: block;
+		padding-top: 20px;
+		padding-bottom: 20px;
+	}
+	.collapse.in, div .accordion-toggle {
+		box-shadow: rgba(255, 255, 255, 0.701961) 3px 3px 3px inset,
+			rgba(0, 0, 0, 0.0980392) -2px -2px 3px inset,
+			rgba(0, 0, 0, 0.0980392) 2px 2px 10px;
+	}
+	.internMenu img.iconMenu {
+		bottom: 7px;
+	}
+	.panel label {
+		padding-top: 30px;
+	}
+	span.glyphicons.circle_plus.iconPlus {
+		padding-top: 55px;
+	}
+	span.glyphicons.iconPlus.circle_minus {
+		padding-top: 55px;
+	}
+	.internMenu {
+		height: 82px;
+	}
+	div .accordion-toggle {
+		margin-bottom: 0px;
+		height: 82px;
+		box-shadow: rgba(222, 219, 219, 0.701961) 3px 3px 3px inset,
+			rgba(0, 0, 0, 0.0980392) -2px -2px 3px inset,
+			rgba(0, 0, 0, 0.0980392) 2px 2px 10px;
+	}
+	.containerTemplete .container.carouselFooter {
+		height: 130px;
+	}
+	.colorGrayFooter {
+		height: 100px;
+	}
+	.wrapper_bu {
+		top: 24px;
+	}
+}
+
+@media only screen and (min-width : 992px) and (max-width : 1199px) {
+	.containerTemplete {
+		margin-left: 2%;
+		margin-right: 2%;
+		width: auto;
+		background-color: white;
+		padding-right: 30px;
+		padding-left: 30px;
+		display: block;
+		border-radius: 10px;
+		margin-top: 11px;
+		margin-bottom: 11px;
+		padding-top: 20px;
+	}
+	.container.containerTemplete p {
+		line-height: 30px;
+	}
+	p img {
+		margin-left: 5%;
+		margin-right: 5%;
+		width: 90%;
+		margin-bottom: 10px;
+	}
+	.carouselContainer {
+		display: block;
+		padding-top: 20px;
+		padding-bottom: 20px;
+	}
+	p {
+		font-size: 15px;
+	}
+}
+
+@media only screen and (min-width : 1200px) {
+	.containerTemplete .container.bodyContainer {
+		width: 100%;
+	}
+	.container.containerTemplete p {
+		line-height: 30px;
+		text-align: justify;
+	}
+	p img {
+		margin: 20px;
+	}
+	.containerTemplete ul, ol {
+		margin-left: 40px;
+	}
+	.container.largeMenu p {
+		margin-left: 0px !important;
+		margin-right: 0px !important;
+	}
+	.carouselContainer {
+		display: block;
+		padding-top: 20px;
+		padding-bottom: 20px;
+	}
+	.carouselFooter, .contentFooter {
+		width: auto;
+	}
+	p {
+		font-size: 15px;
+	}
+	.menuDescription {
+		width: 119px;
+	}
+	.casillaContent {
+		padding-right: 60px;
+		padding-left: 25px;
+	}
+	.container.containerTemplete h1 {
+		text-indent: 0px;
+	}
+	.panel .glyphicons:before {
+		margin-left: 0px;
+	}
+	span.glyphicons.iconPlus.circle_plus {
+		left: 25px;
+	}
+	span.glyphicons.iconPlus.circle_minus {
+		padding-left: 0px;
+		left: 24px;
+	}
+	.holder_bu {
+		height: 80px !important;
+		width: 110px;
+	}
+	.containerTemplete .container.carouselFooter {
+		height: 130px;
+	}
+	.contImgsBenefi {
+		margin-left: -15%;
+		margin-right: -15%;
+	}
+	.colorGrayFooter {
+		height: 145px;
+	}
+	.container.carouselFooter {
+		height: 118px;
+	}
+	.containerTemplete .internMenu{	
+		 width: 30% !important;
+	}
+	@media screen\0 {
+		.wrapper_bu {
+			top: 0px;
+		}
+	}
+}
+
+@media screen\0 {
+	.wrapper_bu {
+		top: 0px;
+	}
+}

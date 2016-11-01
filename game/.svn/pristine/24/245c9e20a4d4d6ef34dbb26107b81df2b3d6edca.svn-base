@@ -1,0 +1,20 @@
+package cr.fi.grupomutual.website.utilities;
+
+import org.springframework.http.HttpEntity;
+
+
+
+/**
+ * Interface for ws client utilities class 
+ * @author cvargas-as Avantica Technologies
+ */
+public interface WsClientUtilities {	
+
+	public String buildJsonStringRequest(String consultType, String namespaces,String code);
+//	public boolean checkRequestHeaderStatusResponse (HeaderResponse cabeceraResp);
+//	public boolean checkRequestHeaderStatusResponse (HeaderResponse cabeceraRespV11);
+//	public Estatus mapResponseHeaderStatus(CrearProspectoMsjRespTipo wsResponse);
+	public HttpEntity<String> setRequestHeader(String url, String jsonStringRequest);
+//	public ClientCredentialsResourceDetails createResourceDetails();
+	
+}

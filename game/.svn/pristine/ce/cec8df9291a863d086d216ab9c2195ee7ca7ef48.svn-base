@@ -1,0 +1,47 @@
+package cr.fi.grupomutual.website.entities.locations;
+
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import cr.fi.grupomutual.website.entities.HeaderResponse;
+
+/**
+ * Class to map provinces data from the web service
+ * 
+ * @author cvargas-as Avantica Technologies
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Province {
+
+	@JsonProperty("ConsultarProvinciaMsjRespTipo")
+	private ConsultarProvinciaMsjRespTipo consultarProvinciaMsjRespTipo;
+
+	// getters
+	public ConsultarProvinciaMsjRespTipo getConsultarProvinciaMsjRespTipo() {
+		return consultarProvinciaMsjRespTipo;
+	}
+
+	public void setConsultarProvinciaMsjRespTipo(
+			ConsultarProvinciaMsjRespTipo consultarProvinciaMsjRespTipo) {
+		this.consultarProvinciaMsjRespTipo = consultarProvinciaMsjRespTipo;
+	}
+
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	public static class ConsultarProvinciaMsjRespTipo extends HeaderResponse {
+
+		@JsonProperty("ListaProvincia")
+		private List<ListaProvincia> listaProvincia;
+
+		public List<ListaProvincia> getListaProvincia() {
+			return listaProvincia;
+		}
+
+		@JsonIgnoreProperties(ignoreUnknown = true)
+		public static class ListaProvincia extends Location {
+
+		}
+
+	}
+}

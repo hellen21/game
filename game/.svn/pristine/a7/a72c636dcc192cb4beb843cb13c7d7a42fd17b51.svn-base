@@ -1,0 +1,10 @@
+package cr.fi.grupomutual.website.ws;
+
+import cr.fi.grupomutual.website.entities.Rate;
+
+public interface HomeWsClient {
+	
+	public Rate getRateChangeValue();
+	
+	
+}

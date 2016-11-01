@@ -1,0 +1,216 @@
+package cr.fi.grupomutual.website.controllers;
+
+
+import groovy.util.logging.Log4j;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mobile.device.Device;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import cr.fi.grupomutual.website.entities.ContactResponse;
+import cr.fi.grupomutual.website.entities.ContentPage;
+import cr.fi.grupomutual.website.entities.ContentSection;
+import cr.fi.grupomutual.website.entities.ContactResponse.ContactResponseWS.Contacts;
+import cr.fi.grupomutual.website.entities.ContentSection.ConsultSectionContentMsjRespType;
+import cr.fi.grupomutual.website.entities.Structure.ConsultStructureSiteMsjRestType.Section;
+import cr.fi.grupomutual.website.entities.JobArea;
+import cr.fi.grupomutual.website.entities.MatchContent;
+import cr.fi.grupomutual.website.entities.Rate;
+import cr.fi.grupomutual.website.entities.Structure;
+import cr.fi.grupomutual.website.utilities.Utils;
+import cr.fi.grupomutual.website.ws.ContantWsClient;
+import cr.fi.grupomutual.website.ws.HomeWsClient;
+import cr.fi.grupomutual.website.ws.SectionWsClient;
+
+@Log4j
+@Controller
+public class ContactController extends Utils{
+
+	@Autowired
+	HomeWsClient homeWsClient;
+	@Autowired
+	SectionWsClient sectionWsClient;
+	@Autowired
+	Utils util;
+	@Autowired
+	ContantWsClient contantWsClient;
+	
+	Logger fileLog = Logger.getLogger("file");
+
+	@RequestMapping(value = "/contactenos")
+	public String contact(Model model, HttpServletRequest request,Device device){
+		String company = "";
+		Cookie companyCookie = util.getCookie(request, "company");
+
+		if(companyCookie != null){
+			company = companyCookie.getValue();
+		}
+		
+		boolean noMain = false;
+		if(company == null){
+			company="1";
+			noMain = true;
+		}
+		Rate rate=null;
+		// Call the service RateChange, to get the rate change value
+		try {
+			 rate = homeWsClient.getRateChangeValue();
+			 if(noMain){
+				 String resp = showHome(company);
+				 MatchContent contentMath=util.searchMath(resp);
+				 ContentPage contentPage = util.generatePage(company, resp, contentMath.getSliderList(), contentMath.getCasillaList(), contentMath.getCarouselList());
+			 }
+			 
+		} catch (Exception e) {
+			fileLog.error("Rate error "+e.toString());
+			rate= new Rate();
+			rate.setAmmountBuy("0");
+			rate.setAmmountSell("0");
+		}
+		boolean isTablet = device.isTablet();
+		model.addAttribute("device", isTablet);
+		model.addAttribute(rate);
+		model.addAttribute("itemList", util.getIdItemsFooter(company));
+		model.addAttribute("menuTit", util.viewListMenu(company));
+		model.addAttribute("footerCarousel", util.getFooterCarouselHTML());
+		List<JobArea> jobsAndEmails = parseJob(contantWsClient.consultContact());
+		model.addAttribute("jobsAndEmails", jobsAndEmails);
+		model.addAttribute("company", company);
+		model.addAttribute("branch", "");
+		return "contact";
+
+	}
+	
+	
+	@RequestMapping(value = "/sendNotification")
+	public @ResponseBody String sendNotification(Model model, HttpServletRequest request,  @RequestParam(value="AreaTrabajo") String value){
+	
+
+		List<JobArea> jobsAndEmails = parseJob(contantWsClient.consultContact());
+		String name= request.getParameter("name");
+		String factory= request.getParameter("factory");
+		String address= request.getParameter("address");
+		String cedula= request.getParameter("ced");
+		String phone= request.getParameter("phone");
+		String inputEmail= request.getParameter("inputEmail");
+		String comment= request.getParameter("comment");
+		String idType= request.getParameter("idtype");
+		
+		@SuppressWarnings("unused")
+		JobArea emails= new JobArea();
+		for(JobArea job: jobsAndEmails){
+			if(job.getContactType().equals(value)){
+				emails= job;
+			}
+		}
+		String comments="&Aacute;rea de trabajo: "+value+"<br>"+"Nombre: "+name+"<br>"+"Primer Apellido: "+factory+"<br>"+"Segundo Apellido: "+address+"<br>"
+		
+				+"Tipo de Identificaci&oacute;n: "+idType+"<br>"+"Identificacion: "+cedula+"<br>"+"Tel&eacute;fono: "+phone+"<br>"+"Email: "+inputEmail+"<br>"+"Comentario: "+comment;
+		
+		contantWsClient.sendComments(name, comments, emails);
+		
+		return "";
+	}
+	
+	int salt = 12345;
+	
+	@RequestMapping(value="/validateInputsCaptcha", method=RequestMethod.GET)
+	public @ResponseBody String createSection( @RequestParam(value="value") String value, @RequestParam(value="text") String text) {
+	
+		if (rpHash(value + salt).equals(text)) {
+			
+		}
+		return null;
+	}
+	
+	private String rpHash( String value) { 
+	    int hash = 5381; 
+	    value = value.toUpperCase(); 
+	    for(int i = 0; i < value.length(); i++) { 
+	        hash = ((hash << 5) + hash) + value.charAt(i); 
+	    } 
+	    return String.valueOf(hash); 
+	} 
+	
+	private List<JobArea> parseJob(ContactResponse contacts){
+		List<JobArea> listJobs= new ArrayList<JobArea>();
+		
+		List<Contacts> listContacts=contacts.getConsultSectionContentMsjSolTipo().getContact();
+		for(Contacts element:listContacts){
+			JobArea jobTemp= new JobArea();
+			if(element.getIdContact()!=null){
+				jobTemp.setIdContant(element.getIdContact());
+				}
+			if(element.getIdCanal()!=null){
+				jobTemp.setIdCanal(element.getIdCanal());
+			}
+			if(element.getContactType()!=null){
+				jobTemp.setContactType(element.getContactType());
+			}
+			if(element.getEmails()!=null){
+				jobTemp.setEmails(element.getEmails());
+			}
+			listJobs.add(jobTemp);
+		}
+		
+		return listJobs;
+	}
+	
+	public String showHome(String company) {
+		String rest = "";
+		// listM is a Arraylist that contains the elements the structure class
+		ArrayList<Section> listM = new ArrayList<Section>();
+		// listMenu is a ArrayList that return the elements should view in the
+		// menu the page html
+		Structure structure=null;
+		try {
+			structure = sectionWsClient.getStructureSite(company);
+		} catch (Exception e) {
+			fileLog.error("Structure error "+e.toString());
+			// TODO: handle exception
+		}
+		// fill the listM with the each section elements the menu
+		try {
+			listM = structure.getConsultStructureSiteMsjRestType().getSection();
+		} catch (Exception e) {
+			fileLog.error("Structure errors "+e.toString());
+			// TODO: handle exception
+		}
+		List<Section> listItemFooter= new ArrayList<Structure.ConsultStructureSiteMsjRestType.Section>();
+		for (int x = 0; x < listM.size(); x++) {
+			Section listMTemp = listM.get(x);
+			if (listMTemp.getSectionFather().contains("-1")||listMTemp.getSectionFather().contains("0")) {
+				if (listMTemp.getTypeSection().getTypeSection().contains("Pagina")||listMTemp.getTypeSection().getTypeSection().contains("Menu")) {
+					if(listMTemp.getTitle().contains("Home")){
+						if(listMTemp.getEstatus().contains("P")){
+							ContentSection contentSection=sectionWsClient.getContentSection(listMTemp.getCode(),company);
+							if(contentSection.getConsultContentSectionMsjRespType()!=null){
+								ConsultSectionContentMsjRespType contentType=contentSection.getConsultContentSectionMsjRespType();
+								if(contentType!=null){
+									if(contentType.getSection()!=null){
+										rest = contentType.getSection().getContent();
+										return rest;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return rest;
+	}
+}

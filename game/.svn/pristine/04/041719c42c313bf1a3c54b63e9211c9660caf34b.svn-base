@@ -1,0 +1,1128 @@
+package cr.fi.grupomutual.website.controllers;
+
+
+import groovy.util.logging.Log4j;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mobile.device.Device;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import cr.fi.grupomutual.website.entities.CarouselItem;
+import cr.fi.grupomutual.website.entities.CasillaItem;
+import cr.fi.grupomutual.website.entities.ContentSection;
+import cr.fi.grupomutual.website.entities.Rate;
+import cr.fi.grupomutual.website.entities.SliderItem;
+import cr.fi.grupomutual.website.entities.Structure;
+import cr.fi.grupomutual.website.entities.Structure.ConsultStructureSiteMsjRestType.Section;
+import cr.fi.grupomutual.website.utilities.Constant;
+import cr.fi.grupomutual.website.utilities.TemplatesGenerator;
+import cr.fi.grupomutual.website.utilities.Utils;
+import cr.fi.grupomutual.website.ws.HomeWsClient;
+import cr.fi.grupomutual.website.ws.SectionWsClient;
+
+/**
+ * Class to map header response data from the web service 
+ * @author hcampos-as Avantica Technologies
+ */
+/**
+ * @author hcampos-as
+ *
+ */
+@Log4j
+@Controller
+public class HomeController{
+
+	@Autowired
+	HomeWsClient homeWsClient;
+	@Autowired
+	SectionWsClient sectionWsClient;
+	
+	@Autowired
+	Utils util;
+	
+	Logger fileLog = Logger.getLogger("file");
+
+	// Create enum with the differents types of tags
+	public enum Tags {
+		SLIDER, CASILLA, CARROUSEL
+	}
+	public static String contextPath;
+
+	@RequestMapping(value = "/")
+	public String home(Model model, @RequestParam(value = "company", required=false)  String company, HttpServletRequest request,Device device) throws JsonParseException,
+			JsonMappingException, IOException {
+		Rate rate=null;
+		// Call the service RateChange, to get the rate change value
+		contextPath= request.getContextPath();
+		boolean isTablet = device.isTablet();
+		model.addAttribute("device", isTablet);
+		try {
+			 rate = homeWsClient.getRateChangeValue();
+		} catch (Exception e) {
+			// TODO: handle exception
+			fileLog.error("Rate error "+e.toString());
+			rate = new Rate();
+			rate.setAmmountBuy("0");
+			rate.setAmmountSell("0");
+		}
+		if(company == null) {
+			company = "1";
+		}
+		List<String> companies= (List<String>) request.getSession().getAttribute("companies");
+		
+		if(companies==null){
+			companies= new ArrayList<String>();
+			companies.add("1");
+		}else{
+			Boolean exist=false;
+			for(int x=0; x<companies.size();x++){
+				if(companies.get(x).equals(company)){
+					exist=true;
+				}
+			}
+			if(!exist){
+				companies.add(company);
+			}
+		}
+		request.getSession().setAttribute("companies", companies);
+		request.getSession().setAttribute("company", company);
+		
+		request.getSession().setAttribute("company", company);
+		model.addAttribute("menuTit", util.viewListMenu(company));
+		
+		String respFooter = showFooter(company);
+		model.addAttribute("itemList", util.getIdItemsFooter(company));
+		model.addAttribute("itemFooter", util.getFooterCarouselHTML());
+		model.addAttribute("company", company);
+		model.addAttribute(rate);
+
+		String resp = showHome(company);
+		
+		
+		
+		System.out.println(respFooter);
+		
+		
+		ArrayList<String> sliderList = new ArrayList<String>();
+		ArrayList<String> casillaList = new ArrayList<String>();
+		ArrayList<String> carouselList = new ArrayList<String>();
+
+		Pattern pattern = Pattern.compile(Constant.MAIN_REGEX);
+
+		Matcher match = pattern.matcher(resp);
+		while (match.find()) {
+			String tag = "";
+			String id = "";
+
+			String text = match.group();
+			pattern = Pattern.compile(Constant.TAG_ID_REGEX);
+			Matcher m = pattern.matcher(text);
+			if (m.find()) {
+				text = m.group();
+			}
+			pattern = Pattern.compile(Constant.TAG_REGEX);
+			m = pattern.matcher(text);
+			if (m.find()) {
+				tag = m.group();
+			}
+
+			pattern = Pattern.compile(Constant.ID_REGEX);
+			m = pattern.matcher(text);
+			if (m.find()) {
+				id = m.group();
+			}
+
+			Tags currentTag = Tags.valueOf(tag.toUpperCase());
+			switch (currentTag) {
+			case SLIDER:
+				sliderList.add(id);
+				break;
+			case CASILLA:
+				casillaList.add(id);
+				break;
+			case CARROUSEL:
+				carouselList.add(id);
+				break;
+			}
+		}
+		
+		String casillasHTML = "";
+		
+		TemplatesGenerator tg = new TemplatesGenerator();
+		String texto = resp;
+			String[] newRespSlider = resp.split(Constant.SLIDER_REGEX);
+			texto = newRespSlider[0];
+
+			for (int i = 0; i < sliderList.size(); i++) {
+
+				String resp1 = sectionWsClient.getContentSection(sliderList.get(i),company).getConsultContentSectionMsjRespType().getSection().getContent();
+				String tempResp1 = resp1.replace("<p>", "");
+				tempResp1 = tempResp1.replace("</p>", "");
+				SliderItem listItemsSlider = new ObjectMapper().readValue(
+						tempResp1, SliderItem.class);
+
+				String slider = tg.createSliderTemplate(listItemsSlider);
+
+				texto += slider;
+				texto += "<div class='container bodyContainer'>";
+				texto += newRespSlider[i + 1];
+			}
+			if (casillaList.size() > 0) {
+				String[] newRespCasilla = texto.split(Constant.CASILLA_REGEX);
+				texto = newRespCasilla[0];
+				ArrayList<CasillaItem> casillas = new ArrayList<CasillaItem>();
+				
+				for (int x = 0; x < casillaList.size(); x++) {
+					String resp1 = sectionWsClient.getContentSection(casillaList.get(x),company).getConsultContentSectionMsjRespType().getSection().getContent();
+					String tempResp1 = resp1.replace("<p>", "");
+					tempResp1 = tempResp1.replace("</p>", "");
+					CasillaItem listItemsSlider = new ObjectMapper().readValue(tempResp1, CasillaItem.class);
+					casillas.add(listItemsSlider);
+				}
+				String [] result = tg.createCasillaTemplate(casillas); 
+				casillasHTML = result[1];
+				texto += result[0];
+				texto += newRespCasilla[casillaList.size()];
+			}
+			if (carouselList.size() > 0) {
+				String[] newRespCarousel = texto.split(Constant.CAROUSEL_REGEX);
+				texto = newRespCarousel[0];
+				for (int i = 0; i < carouselList.size(); i++) {
+					String resp1 = sectionWsClient.getContentSection(carouselList.get(i),company).getConsultContentSectionMsjRespType().getSection().getContent();
+					String tempResp1 = resp1.replace("<p>", "");
+					tempResp1 = tempResp1.replace("</p>", "");
+					CarouselItem listItemsCarrousels = new ObjectMapper().readValue(tempResp1, CarouselItem.class);
+					String carousel = tg.createCarouselTemplate(listItemsCarrousels);
+					util.setFooterCarouselHTML(carousel);
+					texto += newRespCarousel[carouselList.size()];
+				}
+			}
+			texto += "</div>";
+			System.out.println("Codigo HTML: " + texto);
+			System.out.println( "ITEMLIST  "+util.getIdItemsFooter(company));		
+			model.addAttribute("itemList", util.getIdItemsFooter(company));
+			model.addAttribute("footerCarousel", util.getFooterCarouselHTML());
+			model.addAttribute("content", texto);
+			model.addAttribute("casillas", casillasHTML);
+
+			return "home";
+		
+	}
+	
+	@RequestMapping(value = "/MutualFondos")
+	public String Mtufondos(Model model, @RequestParam(value = "company", required=false)  String company, HttpServletRequest request) throws JsonParseException,
+			JsonMappingException, IOException {
+		Rate rate=null;
+		// Call the service RateChange, to get the rate change value
+		contextPath= request.getContextPath();
+		company = "4";
+		try {
+			 rate = homeWsClient.getRateChangeValue();
+		} catch (Exception e) {
+			// TODO: handle exception
+			fileLog.error("Rate error "+e.toString());
+			rate = new Rate();
+			rate.setAmmountBuy("0");
+			rate.setAmmountSell("0");
+		}
+		if(company == null) {
+			company = "4";
+		}
+		List<String> companies= (List<String>) request.getSession().getAttribute("companies");
+		
+		if(companies==null){
+			companies= new ArrayList<String>();
+			companies.add("1");
+		}else{
+			Boolean exist=false;
+			for(int x=0; x<companies.size();x++){
+				if(companies.get(x).equals(company)){
+					exist=true;
+				}
+			}
+			if(!exist){
+				companies.add(company);
+			}
+		}
+		request.getSession().setAttribute("companies", companies);
+		request.getSession().setAttribute("company", company);
+		
+		request.getSession().setAttribute("company", company);
+		model.addAttribute("menuTit", util.viewListMenu(company));
+		
+		String respFooter = showFooter(company);
+		model.addAttribute("itemList", util.getIdItemsFooter(company));
+		model.addAttribute("itemFooter", util.getFooterCarouselHTML());
+		model.addAttribute("company", company);
+		model.addAttribute(rate);
+
+		String resp = showHome(company);
+		
+		
+		
+		System.out.println(respFooter);
+		
+		
+		ArrayList<String> sliderList = new ArrayList<String>();
+		ArrayList<String> casillaList = new ArrayList<String>();
+		ArrayList<String> carouselList = new ArrayList<String>();
+
+		Pattern pattern = Pattern.compile(Constant.MAIN_REGEX);
+
+		Matcher match = pattern.matcher(resp);
+		while (match.find()) {
+			String tag = "";
+			String id = "";
+
+			String text = match.group();
+			pattern = Pattern.compile(Constant.TAG_ID_REGEX);
+			Matcher m = pattern.matcher(text);
+			if (m.find()) {
+				text = m.group();
+			}
+			pattern = Pattern.compile(Constant.TAG_REGEX);
+			m = pattern.matcher(text);
+			if (m.find()) {
+				tag = m.group();
+			}
+
+			pattern = Pattern.compile(Constant.ID_REGEX);
+			m = pattern.matcher(text);
+			if (m.find()) {
+				id = m.group();
+			}
+
+			Tags currentTag = Tags.valueOf(tag.toUpperCase());
+			switch (currentTag) {
+			case SLIDER:
+				sliderList.add(id);
+				break;
+			case CASILLA:
+				casillaList.add(id);
+				break;
+			case CARROUSEL:
+				carouselList.add(id);
+				break;
+			}
+		}
+		
+		String casillasHTML = "";
+		
+		TemplatesGenerator tg = new TemplatesGenerator();
+		String texto = resp;
+			String[] newRespSlider = resp.split(Constant.SLIDER_REGEX);
+			texto = newRespSlider[0];
+
+			for (int i = 0; i < sliderList.size(); i++) {
+
+				String resp1 = sectionWsClient.getContentSection(sliderList.get(i),company).getConsultContentSectionMsjRespType().getSection().getContent();
+				String tempResp1 = resp1.replace("<p>", "");
+				tempResp1 = tempResp1.replace("</p>", "");
+				SliderItem listItemsSlider = new ObjectMapper().readValue(
+						tempResp1, SliderItem.class);
+
+				String slider = tg.createSliderTemplate(listItemsSlider);
+
+				texto += slider;
+				texto += "<div class='container bodyContainer'>";
+				texto += newRespSlider[i + 1];
+			}
+			if (casillaList.size() > 0) {
+				String[] newRespCasilla = texto.split(Constant.CASILLA_REGEX);
+				texto = newRespCasilla[0];
+				ArrayList<CasillaItem> casillas = new ArrayList<CasillaItem>();
+				
+				for (int x = 0; x < casillaList.size(); x++) {
+					String resp1 = sectionWsClient.getContentSection(casillaList.get(x),company).getConsultContentSectionMsjRespType().getSection().getContent();
+					String tempResp1 = resp1.replace("<p>", "");
+					tempResp1 = tempResp1.replace("</p>", "");
+					CasillaItem listItemsSlider = new ObjectMapper().readValue(tempResp1, CasillaItem.class);
+					casillas.add(listItemsSlider);
+				}
+				String [] result = tg.createCasillaTemplate(casillas); 
+				casillasHTML = result[1];
+				texto += result[0];
+				texto += newRespCasilla[casillaList.size()];
+			}
+			if (carouselList.size() > 0) {
+				String[] newRespCarousel = texto.split(Constant.CAROUSEL_REGEX);
+				texto = newRespCarousel[0];
+				for (int i = 0; i < carouselList.size(); i++) {
+					String resp1 = sectionWsClient.getContentSection(carouselList.get(i),company).getConsultContentSectionMsjRespType().getSection().getContent();
+					String tempResp1 = resp1.replace("<p>", "");
+					tempResp1 = tempResp1.replace("</p>", "");
+					CarouselItem listItemsCarrousels = new ObjectMapper().readValue(tempResp1, CarouselItem.class);
+					String carousel = tg.createCarouselTemplate(listItemsCarrousels);
+					util.setFooterCarouselHTML(carousel);
+					texto += newRespCarousel[carouselList.size()];
+				}
+			}
+			texto += "</div>";
+			System.out.println("Codigo HTML: " + texto);
+			System.out.println( "ITEMLIST  "+util.getIdItemsFooter(company));		
+			model.addAttribute("itemList", util.getIdItemsFooter(company));
+			model.addAttribute("footerCarousel", util.getFooterCarouselHTML());
+			model.addAttribute("content", texto);
+			model.addAttribute("casillas", casillasHTML);
+
+			return "home";
+		
+	}
+	
+	@RequestMapping(value = "/MutualLeasing")
+	public String MtuLeasing(Model model, @RequestParam(value = "company", required=false)  String company, HttpServletRequest request) throws JsonParseException,
+			JsonMappingException, IOException {
+		Rate rate=null;
+		// Call the service RateChange, to get the rate change value
+		contextPath= request.getContextPath();
+		company = "5";
+		try {
+			 rate = homeWsClient.getRateChangeValue();
+		} catch (Exception e) {
+			// TODO: handle exception
+			fileLog.error("Rate error "+e.toString());
+			rate = new Rate();
+			rate.setAmmountBuy("0");
+			rate.setAmmountSell("0");
+		}
+		if(company == null) {
+			company = "2";
+		}
+		List<String> companies= (List<String>) request.getSession().getAttribute("companies");
+		
+		if(companies==null){
+			companies= new ArrayList<String>();
+			companies.add("1");
+		}else{
+			Boolean exist=false;
+			for(int x=0; x<companies.size();x++){
+				if(companies.get(x).equals(company)){
+					exist=true;
+				}
+			}
+			if(!exist){
+				companies.add(company);
+			}
+		}
+		request.getSession().setAttribute("companies", companies);
+		request.getSession().setAttribute("company", company);
+		
+		request.getSession().setAttribute("company", company);
+		model.addAttribute("menuTit", util.viewListMenu(company));
+		
+		String respFooter = showFooter(company);
+		model.addAttribute("itemList", util.getIdItemsFooter(company));
+		model.addAttribute("itemFooter", util.getFooterCarouselHTML());
+		model.addAttribute("company", company);
+		model.addAttribute(rate);
+
+		String resp = showHome(company);
+		
+		
+		
+		System.out.println(respFooter);
+		
+		
+		ArrayList<String> sliderList = new ArrayList<String>();
+		ArrayList<String> casillaList = new ArrayList<String>();
+		ArrayList<String> carouselList = new ArrayList<String>();
+
+		Pattern pattern = Pattern.compile(Constant.MAIN_REGEX);
+
+		Matcher match = pattern.matcher(resp);
+		while (match.find()) {
+			String tag = "";
+			String id = "";
+
+			String text = match.group();
+			pattern = Pattern.compile(Constant.TAG_ID_REGEX);
+			Matcher m = pattern.matcher(text);
+			if (m.find()) {
+				text = m.group();
+			}
+			pattern = Pattern.compile(Constant.TAG_REGEX);
+			m = pattern.matcher(text);
+			if (m.find()) {
+				tag = m.group();
+			}
+
+			pattern = Pattern.compile(Constant.ID_REGEX);
+			m = pattern.matcher(text);
+			if (m.find()) {
+				id = m.group();
+			}
+
+			Tags currentTag = Tags.valueOf(tag.toUpperCase());
+			switch (currentTag) {
+			case SLIDER:
+				sliderList.add(id);
+				break;
+			case CASILLA:
+				casillaList.add(id);
+				break;
+			case CARROUSEL:
+				carouselList.add(id);
+				break;
+			}
+		}
+		
+		String casillasHTML = "";
+		
+		TemplatesGenerator tg = new TemplatesGenerator();
+		String texto = resp;
+			String[] newRespSlider = resp.split(Constant.SLIDER_REGEX);
+			texto = newRespSlider[0];
+
+			for (int i = 0; i < sliderList.size(); i++) {
+
+				String resp1 = sectionWsClient.getContentSection(sliderList.get(i),company).getConsultContentSectionMsjRespType().getSection().getContent();
+				String tempResp1 = resp1.replace("<p>", "");
+				tempResp1 = tempResp1.replace("</p>", "");
+				SliderItem listItemsSlider = new ObjectMapper().readValue(
+						tempResp1, SliderItem.class);
+
+				String slider = tg.createSliderTemplate(listItemsSlider);
+
+				texto += slider;
+				texto += "<div class='container bodyContainer'>";
+				texto += newRespSlider[i + 1];
+			}
+			if (casillaList.size() > 0) {
+				String[] newRespCasilla = texto.split(Constant.CASILLA_REGEX);
+				texto = newRespCasilla[0];
+				ArrayList<CasillaItem> casillas = new ArrayList<CasillaItem>();
+				
+				for (int x = 0; x < casillaList.size(); x++) {
+					String resp1 = sectionWsClient.getContentSection(casillaList.get(x),company).getConsultContentSectionMsjRespType().getSection().getContent();
+					String tempResp1 = resp1.replace("<p>", "");
+					tempResp1 = tempResp1.replace("</p>", "");
+					CasillaItem listItemsSlider = new ObjectMapper().readValue(tempResp1, CasillaItem.class);
+					casillas.add(listItemsSlider);
+				}
+				String [] result = tg.createCasillaTemplate(casillas); 
+				casillasHTML = result[1];
+				texto += result[0];
+				texto += newRespCasilla[casillaList.size()];
+			}
+			if (carouselList.size() > 0) {
+				String[] newRespCarousel = texto.split(Constant.CAROUSEL_REGEX);
+				texto = newRespCarousel[0];
+				for (int i = 0; i < carouselList.size(); i++) {
+					String resp1 = sectionWsClient.getContentSection(carouselList.get(i),company).getConsultContentSectionMsjRespType().getSection().getContent();
+					String tempResp1 = resp1.replace("<p>", "");
+					tempResp1 = tempResp1.replace("</p>", "");
+					CarouselItem listItemsCarrousels = new ObjectMapper().readValue(tempResp1, CarouselItem.class);
+					String carousel = tg.createCarouselTemplate(listItemsCarrousels);
+					util.setFooterCarouselHTML(carousel);
+					texto += newRespCarousel[carouselList.size()];
+				}
+			}
+			texto += "</div>";
+			System.out.println("Codigo HTML: " + texto);
+			System.out.println( "ITEMLIST  "+util.getIdItemsFooter(company));		
+			model.addAttribute("itemList", util.getIdItemsFooter(company));
+			model.addAttribute("footerCarousel", util.getFooterCarouselHTML());
+			model.addAttribute("content", texto);
+			model.addAttribute("casillas", casillasHTML);
+
+			return "home";
+		
+	}
+	
+	@RequestMapping(value = "/MutualValores")
+	public String Mtulvalues(Model model, @RequestParam(value = "company", required=false)  String company, HttpServletRequest request) throws JsonParseException,
+			JsonMappingException, IOException {
+		Rate rate=null;
+		// Call the service RateChange, to get the rate change value
+		contextPath= request.getContextPath();
+		company = "2";
+		try {
+			 rate = homeWsClient.getRateChangeValue();
+		} catch (Exception e) {
+			// TODO: handle exception
+			fileLog.error("Rate error "+e.toString());
+			rate = new Rate();
+			rate.setAmmountBuy("0");
+			rate.setAmmountSell("0");
+		}
+		if(company == null) {
+			company = "4";
+		}
+		List<String> companies= (List<String>) request.getSession().getAttribute("companies");
+		
+		if(companies==null){
+			companies= new ArrayList<String>();
+			companies.add("1");
+		}else{
+			Boolean exist=false;
+			for(int x=0; x<companies.size();x++){
+				if(companies.get(x).equals(company)){
+					exist=true;
+				}
+			}
+			if(!exist){
+				companies.add(company);
+			}
+		}
+		request.getSession().setAttribute("companies", companies);
+		request.getSession().setAttribute("company", company);
+		
+		request.getSession().setAttribute("company", company);
+		model.addAttribute("menuTit", util.viewListMenu(company));
+		
+		String respFooter = showFooter(company);
+		model.addAttribute("itemList", util.getIdItemsFooter(company));
+		model.addAttribute("itemFooter", util.getFooterCarouselHTML());
+		model.addAttribute("company", company);
+		model.addAttribute(rate);
+
+		String resp = showHome(company);
+		
+		
+		
+		System.out.println(respFooter);
+		
+		
+		ArrayList<String> sliderList = new ArrayList<String>();
+		ArrayList<String> casillaList = new ArrayList<String>();
+		ArrayList<String> carouselList = new ArrayList<String>();
+
+		Pattern pattern = Pattern.compile(Constant.MAIN_REGEX);
+
+		Matcher match = pattern.matcher(resp);
+		while (match.find()) {
+			String tag = "";
+			String id = "";
+
+			String text = match.group();
+			pattern = Pattern.compile(Constant.TAG_ID_REGEX);
+			Matcher m = pattern.matcher(text);
+			if (m.find()) {
+				text = m.group();
+			}
+			pattern = Pattern.compile(Constant.TAG_REGEX);
+			m = pattern.matcher(text);
+			if (m.find()) {
+				tag = m.group();
+			}
+
+			pattern = Pattern.compile(Constant.ID_REGEX);
+			m = pattern.matcher(text);
+			if (m.find()) {
+				id = m.group();
+			}
+
+			Tags currentTag = Tags.valueOf(tag.toUpperCase());
+			switch (currentTag) {
+			case SLIDER:
+				sliderList.add(id);
+				break;
+			case CASILLA:
+				casillaList.add(id);
+				break;
+			case CARROUSEL:
+				carouselList.add(id);
+				break;
+			}
+		}
+		
+		String casillasHTML = "";
+		
+		TemplatesGenerator tg = new TemplatesGenerator();
+		String texto = resp;
+			String[] newRespSlider = resp.split(Constant.SLIDER_REGEX);
+			texto = newRespSlider[0];
+
+			for (int i = 0; i < sliderList.size(); i++) {
+
+				String resp1 = sectionWsClient.getContentSection(sliderList.get(i),company).getConsultContentSectionMsjRespType().getSection().getContent();
+				String tempResp1 = resp1.replace("<p>", "");
+				tempResp1 = tempResp1.replace("</p>", "");
+				SliderItem listItemsSlider = new ObjectMapper().readValue(
+						tempResp1, SliderItem.class);
+
+				String slider = tg.createSliderTemplate(listItemsSlider);
+
+				texto += slider;
+				texto += "<div class='container bodyContainer'>";
+				texto += newRespSlider[i + 1];
+			}
+			if (casillaList.size() > 0) {
+				String[] newRespCasilla = texto.split(Constant.CASILLA_REGEX);
+				texto = newRespCasilla[0];
+				ArrayList<CasillaItem> casillas = new ArrayList<CasillaItem>();
+				
+				for (int x = 0; x < casillaList.size(); x++) {
+					String resp1 = sectionWsClient.getContentSection(casillaList.get(x),company).getConsultContentSectionMsjRespType().getSection().getContent();
+					String tempResp1 = resp1.replace("<p>", "");
+					tempResp1 = tempResp1.replace("</p>", "");
+					CasillaItem listItemsSlider = new ObjectMapper().readValue(tempResp1, CasillaItem.class);
+					casillas.add(listItemsSlider);
+				}
+				String [] result = tg.createCasillaTemplate(casillas); 
+				casillasHTML = result[1];
+				texto += result[0];
+				texto += newRespCasilla[casillaList.size()];
+			}
+			if (carouselList.size() > 0) {
+				String[] newRespCarousel = texto.split(Constant.CAROUSEL_REGEX);
+				texto = newRespCarousel[0];
+				for (int i = 0; i < carouselList.size(); i++) {
+					String resp1 = sectionWsClient.getContentSection(carouselList.get(i),company).getConsultContentSectionMsjRespType().getSection().getContent();
+					String tempResp1 = resp1.replace("<p>", "");
+					tempResp1 = tempResp1.replace("</p>", "");
+					CarouselItem listItemsCarrousels = new ObjectMapper().readValue(tempResp1, CarouselItem.class);
+					String carousel = tg.createCarouselTemplate(listItemsCarrousels);
+					util.setFooterCarouselHTML(carousel);
+					texto += newRespCarousel[carouselList.size()];
+				}
+			}
+			texto += "</div>";
+			System.out.println("Codigo HTML: " + texto);
+			System.out.println( "ITEMLIST  "+util.getIdItemsFooter(company));		
+			model.addAttribute("itemList", util.getIdItemsFooter(company));
+			model.addAttribute("footerCarousel", util.getFooterCarouselHTML());
+			model.addAttribute("content", texto);
+			model.addAttribute("casillas", casillasHTML);
+
+			return "home";
+		
+	}
+	
+	@RequestMapping(value = "/MutualSeguros")
+	public String MtuSeguros(Model model, @RequestParam(value = "company", required=false)  String company, HttpServletRequest request) throws JsonParseException,
+			JsonMappingException, IOException {
+		Rate rate=null;
+		// Call the service RateChange, to get the rate change value
+		contextPath= request.getContextPath();
+		company = "3";
+		try {
+			 rate = homeWsClient.getRateChangeValue();
+		} catch (Exception e) {
+			// TODO: handle exception
+			fileLog.error("Rate error "+e.toString());
+			rate = new Rate();
+			rate.setAmmountBuy("0");
+			rate.setAmmountSell("0");
+		}
+		if(company == null) {
+			company = "4";
+		}
+		List<String> companies= (List<String>) request.getSession().getAttribute("companies");
+		
+		if(companies==null){
+			companies= new ArrayList<String>();
+			companies.add("1");
+		}else{
+			Boolean exist=false;
+			for(int x=0; x<companies.size();x++){
+				if(companies.get(x).equals(company)){
+					exist=true;
+				}
+			}
+			if(!exist){
+				companies.add(company);
+			}
+		}
+		request.getSession().setAttribute("companies", companies);
+		request.getSession().setAttribute("company", company);
+		
+		request.getSession().setAttribute("company", company);
+		model.addAttribute("menuTit", util.viewListMenu(company));
+		
+		String respFooter = showFooter(company);
+		model.addAttribute("itemList", util.getIdItemsFooter(company));
+		model.addAttribute("itemFooter", util.getFooterCarouselHTML());
+		model.addAttribute("company", company);
+		model.addAttribute(rate);
+
+		String resp = showHome(company);
+		
+		
+		
+		System.out.println(respFooter);
+		
+		
+		ArrayList<String> sliderList = new ArrayList<String>();
+		ArrayList<String> casillaList = new ArrayList<String>();
+		ArrayList<String> carouselList = new ArrayList<String>();
+
+		Pattern pattern = Pattern.compile(Constant.MAIN_REGEX);
+
+		Matcher match = pattern.matcher(resp);
+		while (match.find()) {
+			String tag = "";
+			String id = "";
+
+			String text = match.group();
+			pattern = Pattern.compile(Constant.TAG_ID_REGEX);
+			Matcher m = pattern.matcher(text);
+			if (m.find()) {
+				text = m.group();
+			}
+			pattern = Pattern.compile(Constant.TAG_REGEX);
+			m = pattern.matcher(text);
+			if (m.find()) {
+				tag = m.group();
+			}
+
+			pattern = Pattern.compile(Constant.ID_REGEX);
+			m = pattern.matcher(text);
+			if (m.find()) {
+				id = m.group();
+			}
+
+			Tags currentTag = Tags.valueOf(tag.toUpperCase());
+			switch (currentTag) {
+			case SLIDER:
+				sliderList.add(id);
+				break;
+			case CASILLA:
+				casillaList.add(id);
+				break;
+			case CARROUSEL:
+				carouselList.add(id);
+				break;
+			}
+		}
+		
+		String casillasHTML = "";
+		
+		TemplatesGenerator tg = new TemplatesGenerator();
+		String texto = resp;
+			String[] newRespSlider = resp.split(Constant.SLIDER_REGEX);
+			texto = newRespSlider[0];
+
+			for (int i = 0; i < sliderList.size(); i++) {
+
+				String resp1 = sectionWsClient.getContentSection(sliderList.get(i),company).getConsultContentSectionMsjRespType().getSection().getContent();
+				String tempResp1 = resp1.replace("<p>", "");
+				tempResp1 = tempResp1.replace("</p>", "");
+				SliderItem listItemsSlider = new ObjectMapper().readValue(
+						tempResp1, SliderItem.class);
+
+				String slider = tg.createSliderTemplate(listItemsSlider);
+
+				texto += slider;
+				texto += "<div class='container bodyContainer'>";
+				texto += newRespSlider[i + 1];
+			}
+			if (casillaList.size() > 0) {
+				String[] newRespCasilla = texto.split(Constant.CASILLA_REGEX);
+				texto = newRespCasilla[0];
+				ArrayList<CasillaItem> casillas = new ArrayList<CasillaItem>();
+				
+				for (int x = 0; x < casillaList.size(); x++) {
+					String resp1 = sectionWsClient.getContentSection(casillaList.get(x),company).getConsultContentSectionMsjRespType().getSection().getContent();
+					String tempResp1 = resp1.replace("<p>", "");
+					tempResp1 = tempResp1.replace("</p>", "");
+					CasillaItem listItemsSlider = new ObjectMapper().readValue(tempResp1, CasillaItem.class);
+					casillas.add(listItemsSlider);
+				}
+				String [] result = tg.createCasillaTemplate(casillas); 
+				casillasHTML = result[1];
+				texto += result[0];
+				texto += newRespCasilla[casillaList.size()];
+			}
+			if (carouselList.size() > 0) {
+				String[] newRespCarousel = texto.split(Constant.CAROUSEL_REGEX);
+				texto = newRespCarousel[0];
+				for (int i = 0; i < carouselList.size(); i++) {
+					String resp1 = sectionWsClient.getContentSection(carouselList.get(i),company).getConsultContentSectionMsjRespType().getSection().getContent();
+					String tempResp1 = resp1.replace("<p>", "");
+					tempResp1 = tempResp1.replace("</p>", "");
+					CarouselItem listItemsCarrousels = new ObjectMapper().readValue(tempResp1, CarouselItem.class);
+					String carousel = tg.createCarouselTemplate(listItemsCarrousels);
+					util.setFooterCarouselHTML(carousel);
+					texto += newRespCarousel[carouselList.size()];
+				}
+			}
+			texto += "</div>";
+			System.out.println("Codigo HTML: " + texto);
+			System.out.println( "ITEMLIST  "+util.getIdItemsFooter(company));		
+			model.addAttribute("itemList", util.getIdItemsFooter(company));
+			model.addAttribute("footerCarousel", util.getFooterCarouselHTML());
+			model.addAttribute("content", texto);
+			model.addAttribute("casillas", casillasHTML);
+
+			return "home";
+		
+	}
+	
+	public static String contextPath2;
+	@RequestMapping(value = "/contentCasilla")
+	@ResponseBody
+	public String template(Model model, @RequestParam String code,  HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		
+		contextPath2=request.getContextPath();
+		String company = (String) request.getSession().getAttribute("company");
+		
+		List<String> companies= (List<String>) request.getSession().getAttribute("companies");
+		
+		ContentSection cnt = sectionWsClient.getContentSection(code,company);
+		
+		String resp="";
+		if(cnt.getConsultContentSectionMsjRespType().getSection()!=null){
+			 resp = cnt.getConsultContentSectionMsjRespType().getSection().getContent();
+		}
+		else{
+			for(int x=0; x<companies.size();x++){
+				cnt = sectionWsClient.getContentSection(code,companies.get(x));
+				if(cnt.getConsultContentSectionMsjRespType().getSection()!=null){
+					 resp = cnt.getConsultContentSectionMsjRespType().getSection().getContent();
+					 company=companies.get(x);
+					 request.getSession().setAttribute("company",companies.get(x));
+				}
+			 }
+		}
+		
+		ArrayList<String> sliderList = new ArrayList<String>();
+		ArrayList<String> casillaList = new ArrayList<String>();
+		ArrayList<String> carouselList = new ArrayList<String>();
+
+		Pattern pattern = Pattern.compile(Constant.MAIN_REGEX);
+
+		Matcher match = pattern.matcher(resp);
+		while (match.find()) {
+			String tag = "";
+			String id = "";
+
+			String text = match.group();
+			pattern = Pattern.compile(Constant.TAG_ID_REGEX);
+			Matcher m = pattern.matcher(text);
+			if (m.find()) {
+				text = m.group();
+			}
+
+			pattern = Pattern.compile(Constant.TAG_REGEX);
+			m = pattern.matcher(text);
+			if (m.find()) {
+				tag = m.group();
+			}
+
+			pattern = Pattern.compile(Constant.ID_REGEX);
+			m = pattern.matcher(text);
+			if (m.find()) {
+				id = m.group();
+			}
+
+			Tags currentTag = Tags.valueOf(tag.toUpperCase());
+			switch (currentTag) {
+			case SLIDER:
+				sliderList.add(id);
+				break;
+			case CASILLA:
+				casillaList.add(id);
+				break;
+			case CARROUSEL:
+				carouselList.add(id);
+				break;
+			}
+		}
+		
+		
+		String casillasHTML ="";
+		
+		TemplatesGenerator tg = new TemplatesGenerator();
+		String texto = resp;
+		
+		String[] newbenefic = texto.split("mutualBeneficios");
+		if(1<newbenefic.length){
+			resp = newbenefic[0];
+			String con = contextPath2+"/"+"mutualBeneficios";
+			System.out.println(contextPath2);
+			System.out.println(con);
+			con +=newbenefic[1];
+			resp+= con;
+		}
+		
+		
+		String[] newRespSlider = resp.split(Constant.SLIDER_REGEX);
+		texto = newRespSlider[0];
+
+		for (int i = 0; i < sliderList.size(); i++) {
+			String resp1 = sectionWsClient.getContentSection(sliderList.get(i),company).getConsultContentSectionMsjRespType().getSection().getContent();
+			String tempResp1 = resp1.replace("<p>", "");
+			tempResp1 = tempResp1.replace("</p>", "");
+			SliderItem listItemsSlider = new ObjectMapper().readValue(tempResp1, SliderItem.class);
+			String slider = tg.createSliderTemplate(listItemsSlider);
+			texto += slider;
+			texto += "<div class='container bodyContainer'>";
+			texto += newRespSlider[i + 1];
+		}
+		if (casillaList.size() > 0) {
+			String[] newRespCasilla = texto.split(Constant.CASILLA_REGEX);
+			texto = newRespCasilla[0];
+			ArrayList<CasillaItem> casillas = new ArrayList<CasillaItem>();
+			for (int x = 0; x < casillaList.size(); x++) {
+				String resp1 = sectionWsClient.getContentSection(casillaList.get(x),company).getConsultContentSectionMsjRespType().getSection().getContent();
+				String tempResp1 = resp1.replace("<p>", "");
+				tempResp1 = tempResp1.replace("</p>", "");
+				CasillaItem listItemsSlider = new ObjectMapper().readValue(tempResp1, CasillaItem.class);
+				casillas.add(listItemsSlider);
+			}
+			String [] result = tg.createCasillaTemplate(casillas); 
+			casillasHTML = result[1];
+			texto += result[0];
+			texto += newRespCasilla[casillaList.size()];
+		}
+
+		if (carouselList.size() > 0) {
+			String[] newRespCarousel = texto.split(Constant.CAROUSEL_REGEX);
+			texto = newRespCarousel[0];
+			for (int i = 0; i < carouselList.size(); i++) {
+				String resp1 = sectionWsClient.getContentSection(carouselList.get(i),company).getConsultContentSectionMsjRespType().getSection().getContent();
+				String tempResp1 = resp1.replace("<p>", "");
+				tempResp1 = tempResp1.replace("</p>", "");
+				CarouselItem listItemsCarrousels = new ObjectMapper().readValue(tempResp1, CarouselItem.class);
+				String carousel = tg.createCarouselTemplate(listItemsCarrousels);
+				util.setFooterCarouselHTML(carousel);
+				texto += newRespCarousel[carouselList.size()];
+			}
+		}
+		texto += "</div>";
+		
+		model.addAttribute("casillaContent", texto);
+		
+		return texto;
+	}
+	
+	@RequestMapping(value = "/mapaDelSitio")
+	public String showSiteMap(Model model, HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		Rate rate=null;
+		// Call the service RateChange, to get the rate change value
+		try {
+			 rate = homeWsClient.getRateChangeValue();
+		} catch (Exception e) {
+			fileLog.error("Rate error "+e.toString());
+			rate= new Rate();
+			rate.setAmmountBuy("0");
+			rate.setAmmountSell("0");
+		}
+		String company = (String) request.getSession().getAttribute("company");
+		
+		JSONArray listNodes = new JSONArray();
+		ArrayList<Section> pageStructure = util.section(company);
+		
+		for(Section sect: pageStructure){   
+			if (sect.getTypeSection().getTypeSection().contains("Menu") || sect.getTypeSection().getTypeSection().contains("Pagina")) {
+				JSONObject node = new JSONObject();
+				node.put("id", sect.getCode());
+				if(sect.getSectionFather().equalsIgnoreCase("0")){
+					node.put("parent", "#");
+				}
+				else if(sect.getSectionFather().equalsIgnoreCase("-1")){
+					node.put("parent", "#");
+				}
+				else{ 
+					node.put("parent", sect.getSectionFather());
+				}
+				node.put("text", sect.getTitle());			
+				listNodes.put(node);
+			}
+		}
+		
+		model.addAttribute(rate);
+		model.addAttribute("menuTit",util.viewListMenu(company));
+		model.addAttribute("structure",listNodes);
+		model.addAttribute("itemListMap", util.viewTree(company));
+		model.addAttribute("footerCarousel", util.getFooterCarouselHTML());
+		model.addAttribute("itemList", util.getIdItemsFooter(company));
+		model.addAttribute("company", "?company="+company);
+		
+		return "sitemap";
+		
+	}
+
+	public String showHome(String company) {
+		String rest = "";
+		// listM is a Arraylist that contains the elements the structure class
+		ArrayList<Section> listM = new ArrayList<Section>();
+		// listMenu is a ArrayList that return the elements should view in the
+		// menu the page html
+		Structure structure=null;
+		try {
+			structure = sectionWsClient.getStructureSite(company);
+		} catch (Exception e) {
+			fileLog.error("Structure error "+e.toString());
+			// TODO: handle exception
+		}
+		// fill the listM with the each section elements the menu
+		try {
+			listM = structure.getConsultStructureSiteMsjRestType().getSection();
+		} catch (Exception e) {
+			fileLog.error("Structure errors "+e.toString());
+			// TODO: handle exception
+		}
+		List<Section> listItemFooter= new ArrayList<Structure.ConsultStructureSiteMsjRestType.Section>();
+		for (int x = 0; x < listM.size(); x++) {
+			Section listMTemp = listM.get(x);
+			if (listMTemp.getSectionFather().contains("0")) {
+				if (listMTemp.getTypeSection().getTypeSection().contains("Pagina")) {
+					if(listMTemp.getTitle().contains("Home")){
+						if(listMTemp.getEstatus().contains("P")){
+							rest = sectionWsClient.getContentSection(listMTemp.getCode(),company).getConsultContentSectionMsjRespType().getSection().getContent();
+							return rest;
+						}
+					}
+				}
+			}
+		}
+		return rest;
+	}
+	
+	public String showFooter(String company) {
+		String rest = "";
+		// listM is a Arraylist that contains the elements the structure class
+		ArrayList<Section> listM = new ArrayList<Section>();
+		// listMenu is a ArrayList that return the elements should view in the
+		// menu the page html
+		Structure structure=null;
+		try {
+			structure = sectionWsClient.getStructureSite(company);
+		} catch (Exception e) {
+			fileLog.error("Structure error "+e.toString());
+			// TODO: handle exception
+		}
+		// fill the listM with the each section elements the menu
+		try {
+			listM = structure.getConsultStructureSiteMsjRestType().getSection();
+		} catch (Exception e) {
+			fileLog.error("Structure errors "+e.toString());
+			// TODO: handle exception
+		}
+		List<Section> listItemFooter= new ArrayList<Structure.ConsultStructureSiteMsjRestType.Section>();
+		for (int x = 0; x < listM.size(); x++) {
+			Section listMTemp = listM.get(x);
+			if (listMTemp.getSectionFather().contains("0")) {
+				
+				if (listMTemp.getTypeSection().getTypeSection().contains("Footer")) {
+					if(listMTemp.getTitle().contains("Footer")){
+						rest = sectionWsClient.getContentSection(listMTemp.getCode(),company).getConsultContentSectionMsjRespType().getSection().getContent();
+						return rest;
+					}
+				}
+			}
+		}
+		return rest;
+	}
+}

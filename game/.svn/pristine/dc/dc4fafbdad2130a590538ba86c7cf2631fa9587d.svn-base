@@ -1,0 +1,215 @@
+package cr.fi.grupomutual.website.utilities;
+
+import groovyjarjarantlr.collections.List;
+
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.security.KeyStore;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.UUID;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.stereotype.Service;
+
+/**
+ * Class for ws client utilities system functions
+ * 
+ * @author cvargas-as Avantica Technologies
+ */
+
+@Service
+public class WsClientUtilitiesImpl implements WsClientUtilities {
+
+	Utils utils = new Utils();
+	
+	// Cabecera Solicitud params
+	protected static String PARAMETER_CODIGO_EMPRESA = "1";
+	protected static final String PARAMETER_CODIGO_CANAL = "3";
+	protected static final String PARAMETER_CODIGO_TRANSACCION_TRAZA = "1";
+	protected static final String PARAMETER_CODIGO_MENSAJE_TRAZA = "1";
+	protected static final String PARAMETER_CODIGO_TIPO_TRANSACCION = "1";
+	protected static final String PARAMETER_IP_ORIGEN = "1";
+	protected static final String PARAMETER_DIRECCION_MAC = "";
+	protected static final String PARAMETER_ORIGEN_MENSAJE = "MutualApp";
+	protected static final String PARAMETER_NOMBRE_HOST_CONSUMIDOR = "1";
+	protected static final String PARAMETER_CODIGO_SUPERVISOR = "100";
+	protected static final String PARAMETER_CODIGO_OPERADOR = "100";
+	protected static final String PARAMETER_USUARIO = "1";
+	protected static final String PARAMETER_INDICADOR_REVERSO = "1";
+	protected static final String PARAMETER_CODIGO_AGENCIA = "100";
+	protected static final String PARAMETER_IDENTIFICADOR_UNICO_GLOBAL = "1";
+	protected static final String PARAMETER_HORA = "1";
+	protected static final String PARAMETER_CANTIDAD_REGISTROS = "10";
+	protected static final String PARAMETER_INICIO_REGISTRO = "1";
+	protected static final String PARAMETER_FIN_REGISTRO = "10";
+
+	protected static final String HEADER_RESPONSE_STATUS_SUCCESS_CODE = "0";
+	protected static final String HEADER_RESPONSE_STATUS_SUCCESS_DESCRIPTION = "Transaccion Exitosa";
+
+
+	private String currentDate;
+	private String currentTime;
+	private String ip;
+	private String hostname;
+
+	private HttpEntity<String> restRequest;
+
+	// ///////////////////////////////////////
+	// /// Missing certificate
+	public static void trustSelfSignedSSL() {
+		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+				return null;
+			}
+
+			public void checkClientTrusted(
+					java.security.cert.X509Certificate[] certs, String authType) {
+			}
+
+			public void checkServerTrusted(
+					java.security.cert.X509Certificate[] certs, String authType) {
+			}
+		} };
+
+		try {
+			SSLContext sc = SSLContext.getInstance("SSL");
+			sc.init(null, trustAllCerts, new java.security.SecureRandom());
+			HttpsURLConnection
+					.setDefaultSSLSocketFactory(sc.getSocketFactory());
+			HttpsURLConnection
+					.setDefaultHostnameVerifier(new HostnameVerifier() {
+						public boolean verify(String hostname,
+								SSLSession session) {
+							return true;
+						}
+					});
+			String keystoreType = "JKS";
+			InputStream keystoreLocation = null;
+			char[] keystorePassword = null;
+			char[] keyPassword = null;
+
+			KeyStore keystore = KeyStore.getInstance(keystoreType);
+			keystore.load(keystoreLocation, keystorePassword);
+			KeyManagerFactory kmfactory = KeyManagerFactory
+					.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+			kmfactory.init(keystore, keyPassword);
+
+			InputStream truststoreLocation = null;
+			char[] truststorePassword = null;
+			String truststoreType = "JKS";
+
+			KeyStore truststore = KeyStore.getInstance(truststoreType);
+			truststore.load(truststoreLocation, truststorePassword);
+			TrustManagerFactory tmfactory = TrustManagerFactory
+					.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+
+			KeyManager[] keymanagers = kmfactory.getKeyManagers();
+			TrustManager[] trustmanagers = tmfactory.getTrustManagers();
+
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init(keymanagers, trustmanagers, new SecureRandom());
+			SSLContext.setDefault(sslContext);
+		} catch (Exception e) {
+		}
+	}
+
+	public String buildJsonStringRequest(String consultType, String namespaces, String code) {
+
+		if(code!="")
+		{
+			PARAMETER_CODIGO_EMPRESA=code;
+		}
+		currentDate = utils.getDate();
+		currentTime = utils.getTime();
+		ip = utils.getIp();
+		hostname = utils.getHostname();
+		
+		
+		UUID traceCode = UUID.randomUUID();
+		
+		String jsonStringRequest = "{" + "\""
+				+ consultType
+				+ "\": {"
+				+ "\"@xmlns\": \"http://xmlns.grupomutual.fi.cr/ObjetoEmpresarial/DominioUtilitario/Comun/V1\","
+				+ namespaces + "\"cabeceraSol\": {" + "\"CodigoEmpresa\": \""
+				+ PARAMETER_CODIGO_EMPRESA + "\"," + "\"CodigoCanal\": \""
+				+ PARAMETER_CODIGO_CANAL + "\","
+				+ "\"CodigoTransaccionTraza\": \"" + traceCode + "\","
+				+ "\"CodigoMensajeTraza\": \"" + PARAMETER_CODIGO_MENSAJE_TRAZA
+				+ "\"," + "\"CodigoTipoTransaccion\": \""
+				+ PARAMETER_CODIGO_TIPO_TRANSACCION + "\","
+				+ "\"IpOrigen\": \"" + ip + "\","
+				+ "\"DireccionMac\": \"" + PARAMETER_DIRECCION_MAC + "\","
+				+ "\"OrigenMensaje\": \"" + PARAMETER_ORIGEN_MENSAJE + "\","
+				+ "\"NombreHostConsumidor\": \"" + hostname + "\","
+				+ "\"CodigoSupervisor\": \"" + PARAMETER_CODIGO_SUPERVISOR
+				+ "\"," + "\"CodigoOperador\": \"" + PARAMETER_CODIGO_OPERADOR
+				+ "\"," + "\"Usuario\": \"" + trunkUserName(hostname) + "\","
+				+ "\"IndicadorReverso\": \"" + PARAMETER_INDICADOR_REVERSO
+				+ "\"," + "\"CodigoAgencia\": \"" + PARAMETER_CODIGO_AGENCIA
+				+ "\"," + "\"IndentificadorUnicoGlobal\": \""
+				+ PARAMETER_IDENTIFICADOR_UNICO_GLOBAL + "\","
+				+ "\"Fecha\": \"" + currentDate + "\"," + "\"Hora\": \""
+				+ currentTime + "\"," + "\"CantidadRegistros\": \""
+				+ PARAMETER_CANTIDAD_REGISTROS + "\","
+				+ "\"InicioRegistro\": \"" + PARAMETER_INICIO_REGISTRO + "\","
+				+ "\"FinRegistro\": \"" + PARAMETER_FIN_REGISTRO + "\"" + "},";
+		return jsonStringRequest;
+	}
+
+//	private boolean compareStatusCode(String headerResponseStatusCode, String headerResponseStatusDescription) {
+//		boolean response = false;
+//
+//		if (headerResponseStatusCode
+//				.equals(HEADER_RESPONSE_STATUS_SUCCESS_CODE)) {
+//			response = true;
+//		} else {
+//			if (headerResponseStatusDescription
+//					.equals(HEADER_RESPONSE_STATUS_SUCCESS_DESCRIPTION)) {
+//				response = true;
+//			}
+//		}
+//
+//		return response;
+//	}
+
+	public HttpEntity<String> setRequestHeader(String url, String jsonStringRequest) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+//		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+//		java.util.List<Charset> acceptableCharsets= new ArrayList<Charset>();
+//		acceptableCharsets.add(Charset.forName("UTF-8"));
+//		System.out.println(Charset.forName("UTF-8"));
+//		headers.setAcceptCharset(acceptableCharsets);;
+		restRequest = new HttpEntity<String>(jsonStringRequest,headers);
+		return restRequest;
+	}
+	public String trunkUserName(String userName){
+		int userNameLength= userName.length();
+		
+		if(userNameLength>=20){
+			userName=userName.substring(0, 19);
+		}
+		
+//		System.out.println("numero "+userName);
+		
+		return userName;
+	}
+
+	
+}

@@ -1,0 +1,94 @@
+
+table {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+table th {
+	border: 1px solid #ddd;
+	font-weight: bold;
+	text-align: left;
+	padding: 1%;
+}
+
+table td {
+	border: 1px solid #ddd;
+	padding: 1%;
+}
+
+dl, dt, dd {
+	margin: 0;
+	padding: 0;
+}
+
+form {
+	margin: 0;
+	padding: 0;
+}
+
+fieldset {
+	border: 1px solid #ddd;
+	margin: 0% 0% 2% 0%;
+	padding: 2%;
+}
+
+fieldset legend {
+	margin: 0;
+	padding: 0 4px;
+	background-color: inherit;
+	color: #333;
+}
+
+fieldset code {
+	font: 1em "Courier New", Courier, Monospace;
+}
+
+fieldset pre code {
+	font: 1.1em "Courier New", Courier, Monospace;
+	border-bottom: 1px solid #eee;
+}
+
+fieldset img {
+ 	border: 1px solid #eee;
+}
+
+fieldset p#statusgreen {
+	font-size: 1.2em;
+	background-color: #fff;
+	color: #0a0;
+}
+
+fieldset p#statusred {
+	font-size: 1.2em;
+	background-color: #fff;
+	color: #a00;
+}
+
+fieldset label {
+	display: block;
+}
+
+fieldset label.error {
+	color: red;	
+}
+
+fieldset label.valid {
+	color: green;
+}
+
+fieldset div#captchaimage {
+	float: left;
+	margin-right: 15px;
+}
+
+fieldset input#captcha {
+	width: 25%;
+	border: 1px solid #ddd;
+	padding: 2px;
+}
+
+fieldset input#submit {
+	display: block;
+	margin: 2% 0% 0% 0%;
+}

@@ -1,0 +1,57 @@
+package cr.fi.grupomutual.website.entities;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+/**
+ * 
+ * Class to map the content of section data from the web service 
+ * @author dbrenes-as Avantica Technologies
+ * 
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ContentSection {
+
+	@JsonProperty("ConsultarContenidoSeccionMsjRespTipo")
+	private ConsultSectionContentMsjRespType consultSectionContentMsjSolTipo;
+
+	// Getters
+	public ConsultSectionContentMsjRespType getConsultContentSectionMsjRespType() {
+		return consultSectionContentMsjSolTipo;
+	}
+
+	
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	public static class ConsultSectionContentMsjRespType extends HeaderResponse {
+	
+	
+		@JsonProperty("Seccion")
+		private Section section;
+
+	
+		public Section getSection() {
+			return section;
+		} 
+		// setters
+		public void setSection(Section section) {
+			this.section = section;
+		}
+
+		@JsonIgnoreProperties(ignoreUnknown = true)
+		public static class Section {
+			
+			@JsonProperty("Contenido")
+			private String content;
+
+			// getters
+			public String getContent() {
+				return content;
+			}			
+
+			// setters
+			public void setContent(String content) {
+				this.content = content;
+			}			
+		}
+	}
+}

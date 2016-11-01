@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head>
+
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-control" content="public" />
+
+<!-- ===========STYLES=========== -->
+<div th:include="layouts/styles" th:remove="tag"></div>
+
+<link th:href="@{/css/template.css}" rel="stylesheet" media="screen" />
+
+<link rel="stylesheet" type="text/css"
+	th:href="@{/css/mutualBenefitst/default.css}" />
+<link rel="stylesheet" type="text/css"
+	th:href="@{/css/mutualBenefitst/component.css}" />
+<script th:src="@{/js/mutualBenefitst/modernizr.custom.js}"></script>
+
+<title th:text="#{label.home.title}"></title>
+
+</head>
+<body>
+
+	<!-- ===========HEADER=========== -->
+	<div th:include="layouts/header" th:remove="tag"></div>
+
+
+	<!-- ===========Carousel=========== -->
+	<div class="container bodyContainer">
+		<div class="container containerTemplete ">
+
+			<div>
+				<img id="imgBenefitst" class="img-responsive"
+					th:src="@{/images/mutualbeneficios/logomutualbeneficios.png}" />
+			</div>
+			<div class="contentBeneficts">
+				<div class="btnSelectBenefi">
+					<input class="filter-box" type="text"
+						data-filter-target=".benefictElement span.IP-list-name"
+						data-filter-hide=".ui-screen-hidden" placeholder="Buscar" />
+				</div>
+				<div class="contImgsBenefi">
+					<ul data-role="listview" data-filter="true"
+						data-filter-placeholder="Buscar"
+						class="IP-list-results scroll grid cs-style-1 ">
+						<li th:each="benefict : ${listMutualBeneficts}"
+							th:attr="data-code=${benefict.code}" class="benefictElement">
+							<span class="IP-list-name" th:text="${benefict.name}"></span>
+							<figure>
+								<img th:src="${benefict.image.url}" alt="img01" />
+
+							</figure>
+						</li>
+
+					</ul>
+				</div>
+			</div>
+			<div id="benefictDetails" class="fullscreenlist scroll container">
+				<span class="glyphicons circle_arrow_left backDetails"></span>
+				<div class="interest-point-detail-img">
+					<img class="img-local img-responsive" />
+				</div>
+
+				<div class="IP-detail-header">
+					<span></span>
+				</div>
+				<div class="interest-point-details-body">
+					<ul>
+						<li>
+							<div class="fa fa-details fa-details-address"></div>
+							<div class="fa-details-value">
+								<span class="details-label">Dirección: </span> <span
+									class="details-value" id="direction"></span>
+							</div>
+						</li>
+						<li style="display: none">
+							<div class="fa fa-details fa-details-location"></div>
+							<div class="fa-details-value">
+								<span class="details-label">Latitud: </span><span
+									class="details-value" id="latitud"></span>&nbsp;&nbsp;<span
+									class="details-second-label">Longitud: </span><span
+									class="details-value" id="longitud"></span>
+							</div>
+						</li>
+
+						<li>
+							<div class="fa fa-details fa-details-phone"></div>
+							<div class="fa-details-value">
+								<span class="details-label">Teléfono Principal: </span><span
+									class="details-value" id="phonePrincipal"></span>
+							</div>
+						</li>
+						<li>
+							<div class="fa fa-details fa-details-address"></div>
+							<div class="fa-details-value">
+								<span class="details-label">Provincia: </span><span
+									class="details-value" id="province"></span>&nbsp;&nbsp;
+							</div>
+						</li>
+						<li>
+							<div class="fa fa-details fa-details-address"></div>
+							<div class="fa-details-value">
+								<span class="details-label">Cantón: </span><span
+									class="details-value" id="canton"></span>&nbsp;&nbsp;
+							</div>
+						</li>
+						<li><div class="fa fa-details fa-details-address"></div>
+							<div class="fa-details-value">
+								<span class="details-label">Distrito: </span><span
+									class="details-value" id="distric"></span>&nbsp;&nbsp;
+							</div></li>
+						<li><div class="fa fa-details fa-details-category"></div>
+							<div class="fa-details-value">
+								<span class="details-label">Categoría: </span><span
+									class="details-value" id="category"></span>&nbsp;&nbsp;
+							</div></li>
+						<li><div class="fa fa-details fa-details-horary"></div>
+							<div class="fa-details-value">
+								<span class="details-label">Horario Regular: </span><span
+									class="details-value" id="hour"></span>
+							</div>
+						</li>
+						<li>
+							<div class="fa-details-value">
+								<span class="details-label">Sabado: </span><span
+									class="details-value" id="saturday"></span>
+							</div>
+						</li>
+						<li>
+							<div class="fa-details-value">
+								<span class="details-label">Domingo: </span><span
+									class="details-value" id="sunday"></span>
+							</div>
+						</li>
+						<li>
+							<div class="fa fa-details fa-details-horary"></div>
+							<div class="fa-details-value fa-details-phone">
+
+								<span class="details-label">Información Adicional: </span><span
+									class="details-value" id="information"></span>
+							</div>
+						</li>
+						<li>
+							<div class="fa fa-details fa-details-phone"></div>
+							<div class="fa-details-value">
+								<span class="details-label">Enlace: </span><a
+									class="details-value" id="link"></a>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+
+
+
+	</div>
+
+
+	<div class="displayFooter">
+		<div class="displayFooterArrow">
+			<span class="glyphicon glyphicon-chevron-up"></span>
+		</div>
+	</div>
+
+
+	<!-- ===========FOOTER=========== -->
+	<div th:include="layouts/footer" th:remove="tag"></div>
+	<!-- ===========SCRIPTS=========== -->
+	<div th:include="layouts/scripts" th:remove="tag"></div>
+
+	<script th:src="@{/js/mutualBenefitst/benefict.js}"></script>
+	<script th:src="@{/js/filterThis.js}"></script>
+	<script th:src="@{/assets/jquery/jquery.autocomplete.min.js}"></script>
+
+	<script th:inline="javascript">	
+		var company = [[${company}]];
+		var listBeneficts = [[${listMutualBeneficts}]];		
+		var fooCarousel = [[${footerCarousel}]];		
+		$('#fooCarouselDiv').replaceWith(fooCarousel);	
+	</script>
+
+
+</body>
+</html>

@@ -1,0 +1,285 @@
+package cr.fi.grupomutual.website.entities;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+/**
+ * 
+ * Class to map header response data from the web service
+ * @author dbrenes-as Avantica Technologies
+ * 
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class HeaderResponse {
+
+	@JsonProperty("@xmlns:v1")
+	private String xmlns;
+
+	@JsonProperty("cabeceraResp")
+	private HeadResp headResp;
+
+	@JsonProperty("v11:cabeceraResp")
+	private HeadRespV11 headRespV11;
+
+	@JsonProperty("duticom:cabeceraResp")
+	private HeadRespDuticom headRespDuticom;
+
+	// getters
+	public String getXmlns() {
+		return this.xmlns;
+	}
+
+	public HeadResp getHeadResp() {
+		return this.headResp;
+	}
+
+	public HeadRespV11 getHeadRespV11() {
+		return this.headRespV11;
+	}
+
+	public HeadRespDuticom getHeadRespDuticom() {
+		return this.headRespDuticom;
+	}
+
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	public static class HeadResp {
+
+		@JsonProperty("@xmlns:v1")
+		private String xmlns;
+		@JsonProperty("CodigoMensajeTraza")
+		private String messageTrazaCode;
+		@JsonProperty("CodigoTransaccionTraza")
+		private String transactionTrazaCode;
+		@JsonProperty("CodigoCanal")
+		private String channelCode;
+		@JsonProperty("CodigoEmpresa")
+		private String companyCode;
+		@JsonProperty("Estatus")
+		private Status status;
+
+		// getters
+		public String getXmlns() {
+			return xmlns;
+		}
+
+		public String getMessageTrazaCode() {
+			return messageTrazaCode;
+		}
+
+		public String getTransactionTrazaCode() {
+			return transactionTrazaCode;
+		}
+
+		public String getChannelCode() {
+			return channelCode;
+		}
+
+		public String getCompanyCode() {
+			return companyCode;
+		}
+
+		public Status getStatus() {
+			return status;
+		}
+
+		@JsonIgnoreProperties(ignoreUnknown = true)
+		public static class Status {
+
+			@JsonProperty("Codigo")
+			private String code;
+			@JsonProperty("DescripcionEstatus")
+			private String statusDescription;
+			@JsonProperty("EstatusAdicional")
+			private AdditionalStatus additionalStatus;
+
+			// getters
+			public String getCode() {
+				return code;
+			}
+
+			public String getStatusDescription() {
+				return statusDescription;
+			}
+
+			public AdditionalStatus getAdditionalStatus() {
+				return additionalStatus;
+			}
+
+			@JsonIgnoreProperties(ignoreUnknown = true)
+			public static class AdditionalStatus {
+
+				@JsonProperty("TipoEstatus")
+				private String statusType;
+				@JsonProperty("DescripcionEstatus")
+				private String statusDescription;
+
+				// getters
+				public String getStatusType() {
+					return statusType;
+				}
+
+				public String getStatusDescription() {
+					return statusDescription;
+				}
+			}
+		}
+
+	}
+
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	public static class HeadRespV11 {
+
+		@JsonProperty("@xmlns:v11")
+		private String xmlns;
+		@JsonProperty("v11:CodigoMensajeTraza")
+		private String messageTrazaCode;
+		@JsonProperty("v11:CodigoTransaccionTraza")
+		private String transactionTrazaCode;
+		@JsonProperty("v11:CodigoCanal")
+		private String channelCode;
+		@JsonProperty("v11:CodigoEmpresa")
+		private String companyCode;
+		@JsonProperty("v11:Estatus")
+		private Status status;
+
+		// getters
+		public Status getStatus() {
+			return status;
+		}
+
+		public String getMessageTrazaCode() {
+			return messageTrazaCode;
+		}
+
+		public String getTransactionTrazaCode() {
+			return transactionTrazaCode;
+		}
+
+		public String getChannelCode() {
+			return channelCode;
+		}
+
+		public String getCompanyCode() {
+			return companyCode;
+		}
+
+		public String getXmlns() {
+			return xmlns;
+		}
+
+		@JsonIgnoreProperties(ignoreUnknown = true)
+		public static class Status {
+
+			@JsonProperty("v11:Codigo")
+			private String code;
+			@JsonProperty("v11:DescripcionEstatus")
+			private String statusDescription;
+			@JsonProperty("v11:EstatusAdicional")
+			private AdditionalStatus additionalStatus;
+
+			// getters
+			public AdditionalStatus getAdditionalStatus() {
+				return additionalStatus;
+			}
+
+			public String getCode() {
+				return code;
+			}
+
+			public String getStatusDescription() {
+				return statusDescription;
+			}
+
+			@JsonIgnoreProperties(ignoreUnknown = true)
+			public static class AdditionalStatus {
+
+				@JsonProperty("v11:TipoEstatus")
+				private String statusType;
+				@JsonProperty("v11:DescripcionEstatus")
+				private String statusDescription;
+
+				// getters
+				public String getStatusDescription() {
+					return statusDescription;
+				}
+
+				public String getStatusType() {
+					return statusType;
+				}
+			}
+		}
+
+	}
+
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	public static class HeadRespDuticom {
+
+		@JsonProperty("@xmlns:duticom")
+		private String xmlns;
+		@JsonProperty("duticom:CodigoMensajeTraza")
+		private String messageTrazaCode;
+		@JsonProperty("duticom:CodigoTransaccionTraza")
+		private String transactionTrazaCode;
+		@JsonProperty("duticom:CodigoCanal")
+		private String channelCode;
+		@JsonProperty("duticom:CodigoEmpresa")
+		private String companyCode;
+		@JsonProperty("duticom:Estatus")
+		private Status status;
+
+		// getters
+		public Status getStatus() {
+			return status;
+		}
+
+		public String getMessageTrazaCode() {
+			return messageTrazaCode;
+		}
+
+		public String getTransactionTrazaCode() {
+			return transactionTrazaCode;
+		}
+
+		public String getChannelCode() {
+			return channelCode;
+		}
+
+		public String getCompanyCode() {
+			return companyCode;
+		}
+
+		public String getXmlns() {
+			return xmlns;
+		}
+
+		@JsonIgnoreProperties(ignoreUnknown = true)
+		public static class Status {
+
+			@JsonProperty("duticom:Codigo")
+			private String code;
+			@JsonProperty("duticom:TipoEstatus")
+			private String statusType;
+			@JsonProperty("duticom:DescripcionEstatus")
+			private String statusDescription;
+			@JsonProperty("duticom:NombreAplicacion")
+			private String applicationName;
+
+			public String getCode() {
+				return code;
+			}
+
+			public String getStatusType() {
+				return this.statusType;
+			}
+
+			public String getStatusDescription() {
+				return this.statusDescription;
+			}
+
+			public String getApplicationName() {
+				return this.applicationName;
+			}
+		}
+
+	}
+}

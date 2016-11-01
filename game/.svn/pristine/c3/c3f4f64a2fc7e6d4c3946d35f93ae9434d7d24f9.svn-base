@@ -1,0 +1,43 @@
+package cr.fi.grupomutual.website.entities.locations;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import cr.fi.grupomutual.website.entities.JsonValue;
+
+
+/**
+ * Class to map locations data from the web service 
+ * @author cvargas-as Avantica Technologies
+ */
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Location {
+	
+	@JsonProperty("Codigo")
+	private String codigo;
+	@JsonProperty("Nombre")
+	private String nombre;
+	@JsonProperty("Estatus")
+	private String estatus;
+	public String getCodigo() {
+		return codigo;
+	}
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+	public String getNombre() {
+		return nombre;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	public String getEstatus() {
+		return estatus;
+	}
+	public void setEstatus(String estatus) {
+		this.estatus = estatus;
+	}				
+
+
+}

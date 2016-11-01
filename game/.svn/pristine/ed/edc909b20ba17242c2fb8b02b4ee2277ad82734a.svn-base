@@ -1,0 +1,15 @@
+#spring.mobile.devicedelegatingviewresolver.enabled: true
+
+googlemaps.apiKey=AIzaSyDh8XZHEDnzs8Um8BwoCm-DuF7bqwnFgSo
+googlemaps.zoom=15
+
+server.port = 8001
+
+#server.contextPath=/SitioComercial
+#Services 
+mutualapp.wserviceurl = http://10.10.139.32:8096/MutualApp/
+mutualapp.endPointSection = Utilitario
+mutualapp.endPointMoney = ConversionMoneda
+
+error.whitelabel.enabled=false
+cache.timeExpired = 1

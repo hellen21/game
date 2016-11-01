@@ -1,0 +1,220 @@
+.bodyContainer p {
+	font-size: 15px;
+}
+
+strong {
+	font-size: 15px;
+}
+
+h1 {
+	font-size: 15px;
+	color: rgb(151, 45, 45);
+	font-family: inherit;
+}
+
+.bodyContainer form {
+	margin-bottom: 35px;
+	margin-top: 15px;
+}
+
+canvas#txtCaptcha {
+	border-radius: 7px;
+	position: relative;
+	background: rgba(204, 204, 204, 0.41);
+}
+
+a#btnrefresh {
+	position: relative;
+	bottom: 20px;
+	left: 12px;
+}
+
+textarea#comment {
+	max-width: 100%;
+}
+
+.bodyContainer .form-control {
+	font-size: 12px;
+	padding-right: 30px;
+}
+
+.bodyContainer .form-group {
+	margin-bottom: 10px;
+}
+
+.btn-primary {
+	color: #fff;
+	background-color: #C11212;
+	border-color: #C11212;
+	font-size: 10px;
+	float: right;
+}
+
+.col-xs-offset-6 {
+	top: -25px;
+}
+
+footer {
+	display: none;
+}
+
+form .glyphicon:before {
+	color: gray;
+	margin-left: -30px;
+}
+
+.form-control-feedback {
+	top: 0px;
+	z-index: 0;
+}
+
+.ui-selectmenu-button span.ui-selectmenu-text {
+	color: #555;
+	height: 34px !important;
+	font-size: 12px;
+	display: block;
+	width: 100%;
+	height: 34px;
+	padding: 6px 12px !important;
+	line-height: 1.42857143 !important;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-weight: initial;
+}
+
+input[type=text]:focus, textarea:focus, input[type="email"]:focus, input[type="tel"]:focus,
+	option:focus, select:focus {
+	box-shadow: 0 0 5px red !important;
+	border: 1px solid red !important;
+}
+
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover,
+	.ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus
+	{
+	border: 1px solid red !important;
+	background: #FFFFFF;
+	background-color: red;
+	color: white;
+	font-size: 12px;
+	font-weight: inherit;
+}
+
+.ui-menu .ui-menu-item {
+	font-size: 12px;
+	font-weight: inherit;
+}
+
+select:first-child {
+	width: 100%;
+}
+
+.containerTemplete {
+	text-align: justify;
+}
+
+.container.containerTemplete.msjContact {
+	padding-left: 10px;
+	padding-right: 10px;
+	display: none;
+}
+
+.buttonThanks {
+	text-align: center;
+	top: 50px;
+	position: relative;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+@media only screen and (min-width : 320px) and (max-width : 479px) {
+	.bodyContainer {
+		font-size: 15px;
+	}
+	.container {
+		padding-left: 0px;
+		padding-right: 0px;
+	}
+	select span:first-child {
+		width: 100% !important;
+	}
+	.ui-selectmenu-button span.ui-selectmenu-text {
+		font-size: 10px;
+	}
+	.col-xs-8 {
+		width: 100%;
+	}
+	canvas#txtCaptcha {
+		width: 277px;
+		height: 60px;
+	}
+}
+
+@media only screen and (min-width : 480px) and (max-width : 767px) {
+	.container {
+		padding-left: 0px;
+		padding-right: 0px;
+	}
+	.col-xs-8 {
+		width: 100%;
+	}
+}
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-width : 768px) and (max-width : 1199px) {
+	.bodyContainer {
+		margin-left: 2%;
+		margin-right: 2%;
+		width: auto;
+		background-color: white !important;
+		padding-right: 30px;
+		padding-left: 30px;
+		display: block;
+		border-radius: 10px;
+		margin-top: 11px;
+		margin-bottom: 30px;
+	}
+	h5, h1 {
+		margin-top: 30px;
+	}
+	.col-sm-7 {
+		width: 85.333333%;
+	}
+	p.pThanks {
+		width: 70%;
+	}
+}
+
+@media only screen and (min-width : 992px) and (max-width : 1199px) {
+	.bodyContainer {
+		background-color: rgb(230, 230, 230);
+	}
+	.bodyContainer {
+		background-color: white;
+	}
+}
+
+@media only screen and (min-width : 1200px) {
+	.container {
+		padding-right: 15px;
+		padding-left: 15px;
+	}
+	.bodyContainer {
+		background-color: transparent;
+	}
+	h5, h1 {
+		margin-top: 20px;
+	}
+	select:first-child {
+		width: 245px;
+	}
+	h6 {
+		margin-left: 40px;
+	}
+	.bodyContainer form {
+		margin-left: 40px;
+	}
+	p.pThanks {
+		width: 55%;
+	}
+}

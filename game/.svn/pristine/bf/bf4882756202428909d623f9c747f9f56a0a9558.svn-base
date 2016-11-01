@@ -1,0 +1,127 @@
+package cr.fi.grupomutual.website.entities;
+
+import java.util.ArrayList;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import cr.fi.grupomutual.website.utilities.Constant;
+
+/**
+ * Class to map ConsultStructureSiteMsjRestType response data from the web service
+ * 
+ * @author hcampos-as Avantica Technologies
+ */
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Structure {
+	//private static final String V1_NAMESPACE = "v1:";
+
+	@JsonProperty("ConsultarEstructuraSitioMsjRespTipo")
+	private ConsultStructureSiteMsjRestType ConsultStructureSiteMsjRestType;
+
+
+	public ConsultStructureSiteMsjRestType getConsultStructureSiteMsjRestType() {
+		return ConsultStructureSiteMsjRestType;
+	}
+
+
+
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	public static class ConsultStructureSiteMsjRestType extends HeaderResponse {
+
+		@JsonProperty("Seccion")
+		private ArrayList<Section> section;
+
+	
+		public void setSection(ArrayList<Section> section) {
+			this.section = section;
+		}
+
+
+		public ArrayList<Section> getSection() {
+			return section;
+		}
+
+		@JsonIgnoreProperties(ignoreUnknown = true)
+		public static class Section {
+			@JsonProperty("SeccionPadre")
+			private String sectionFather;
+			@JsonProperty("Codigo")
+			private String code;
+			@JsonProperty("Titulo")
+			private String title;
+			@JsonProperty("Estatus")
+			private String estatus;
+			@JsonProperty("URL")
+			private String url;
+			@JsonProperty("TipoSeccion")
+			private TypeSection typeSection;
+
+			public String getSectionFather() {
+				return sectionFather;
+			}
+
+			public void setSectionFather(String sectionFather) {
+				this.sectionFather = sectionFather;
+			}
+
+			public String getCode() {
+				return code;
+			}
+
+			public void setCode(String code) {
+				this.code = code;
+			}
+
+			public String getUrl() {
+				return url;
+			}
+
+			public void setUrl(String url) {
+				this.url = url;
+			}
+
+			public String getTitle() {
+				return title;
+			}
+
+			public void setTitle(String title) {
+				this.title = title;
+			}
+
+			public String getEstatus() {
+				return estatus;
+			}
+
+			public void setEstatus(String estatus) {
+				this.estatus = estatus;
+			}
+
+			public TypeSection getTypeSection() {
+				return typeSection;
+			}
+
+			public void setTypeSection(TypeSection typeSection) {
+				this.typeSection = typeSection;
+			}
+
+			@JsonIgnoreProperties(ignoreUnknown = true)
+			public static class TypeSection {
+				@JsonProperty("TipoSeccion")
+				private String typeSection;
+
+				public String getTypeSection() {
+					return typeSection;
+				}
+
+				public void setTypeSection(String typeSection) {
+					this.typeSection = typeSection;
+				}
+
+				
+
+			}
+		}
+	}
+}

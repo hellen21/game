@@ -1,0 +1,203 @@
+package cr.fi.grupomutual.website.controllers;
+
+import groovy.util.logging.Log4j;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import cr.fi.grupomutual.website.entities.PromotionsWsResponse.PromotionResponse.Promotion;
+import cr.fi.grupomutual.website.entities.Rate;
+import cr.fi.grupomutual.website.entities.locations.Canton;
+import cr.fi.grupomutual.website.entities.locations.Canton.ConsultarCantonMsjRespTipo.ListaCanton;
+import cr.fi.grupomutual.website.entities.locations.Category.ConsultarCategoriasPuntoDeInteresMsjRespTipo.ListaCategoriaPuntoInteres;
+import cr.fi.grupomutual.website.entities.locations.District;
+import cr.fi.grupomutual.website.entities.locations.District.ConsultarDistritoMsjRespTipo.ListaDistrito;
+import cr.fi.grupomutual.website.entities.locations.InterestPoints.ConsultarPuntosDeInteresMsjRespTipo.ListaPuntoInteres;
+import cr.fi.grupomutual.website.entities.locations.Province;
+import cr.fi.grupomutual.website.entities.locations.Province.ConsultarProvinciaMsjRespTipo.ListaProvincia;
+import cr.fi.grupomutual.website.services.NearMeService;
+import cr.fi.grupomutual.website.utilities.Utils;
+import cr.fi.grupomutual.website.ws.HomeWsClient;
+
+/**
+ * Controller to handle find us section requests
+ * 
+ * @author cvargas-as Avantica Technologies
+ */
+
+@Log4j
+@Controller
+public class NearMeController extends Utils {
+
+	protected static final String ATTRIBUTE_APIKEY = "apiKey";
+	protected static final String ATTRIBUTE_CANTONS = "cantons";
+	protected static final String ATTRIBUTE_CATEGORIES = "categories";
+	protected static final String ATTRIBUTE_DISTRICTS = "districts";
+	protected static final String ATTRIBUTE_PROVINCES = "provinces";
+	protected static final String ATTRIBUTE_ZOOM = "zoom";
+
+	protected static final String METHOD_GET_CANTONS = "/nearme/getCantons";
+	protected static final String METHOD_GET_DISTRICTS = "/nearme/getDistricts";
+	protected static final String METHOD_GET_INTEREST_POINTS = "/nearme/getInterestPoints";
+	protected static final String METHOD_GET_INTEREST_POINTS_WITH_LOCATIONS = "/nearme/getInterestPointsWithLocations";
+	protected static final String METHOD_GET_PROMOTIONS = "/nearme/getPromotions";
+	protected static final String METHOD_GET_PROVINCES = "/nearme/getProvinces";
+	protected static final String METHOD_NEARME = "/cercaDeMi";
+
+	protected static final String PARAMETER_CANTON_ID = "cantonId";
+	protected static final String PARAMETER_DISTRICT_ID = "districtId";
+	protected static final String PARAMETER_LATITUDE = "latitude";
+	protected static final String PARAMETER_LONGITUDE = "longitude";
+	protected static final String PARAMETER_PROVINCE_ID = "provinceId";
+
+	protected static final String VIEW_NEARME = "nearme";
+
+	Logger fileLog = Logger.getLogger("file");
+	@Autowired
+	private NearMeService nearMeService;
+
+	@Autowired
+	HomeWsClient homeWsClient;
+
+	@Autowired
+	Utils util;
+
+	@Value("${googlemaps.apiKey}")
+	private String MAPS_API_KEY;
+	@Value("${googlemaps.zoom}")
+	private String MAPS_ZOOM;
+
+	@RequestMapping(value = METHOD_GET_CANTONS)
+	public @ResponseBody List<ListaCanton> getCantons(
+			@RequestParam(value = PARAMETER_PROVINCE_ID) String provinceId) {
+		Canton response = null;
+		try {
+			response = nearMeService.getCantonsData(provinceId);
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+			fileLog.error("Canton error " + e.toString());
+		}
+		return response.getConsultarCantonMsjRespTipo().getListaCanton();
+	}
+
+	@RequestMapping(value = METHOD_GET_DISTRICTS)
+	public @ResponseBody List<ListaDistrito> getDistricts(
+			@RequestParam(value = PARAMETER_CANTON_ID) String cantonId,
+			@RequestParam(value = PARAMETER_PROVINCE_ID) String provinceId) {
+
+		District response = null;
+		try {
+			response = nearMeService.getDistrictsData(cantonId, provinceId);
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			fileLog.error("District error " + e.toString());
+			e.printStackTrace();
+		}
+		return response.getConsultarDistritoMsjRespTipo().getListaDistrito();
+	}
+
+	@RequestMapping(value = METHOD_GET_INTEREST_POINTS)
+	public @ResponseBody List<ListaPuntoInteres> getInterestPoints(
+			@RequestParam(value = PARAMETER_LATITUDE) String latitude,
+			@RequestParam(value = PARAMETER_LONGITUDE) String longitude) {
+
+		try {
+			return nearMeService.getInterestPoints(latitude, longitude);
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			fileLog.error("IterestPoints error " + e.toString());
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@RequestMapping(value = METHOD_GET_INTEREST_POINTS_WITH_LOCATIONS)
+	public @ResponseBody List<ListaPuntoInteres> getInterestPointsWithLocations(
+			@RequestParam(value = PARAMETER_PROVINCE_ID) String provinceId,
+			@RequestParam(value = PARAMETER_CANTON_ID) String cantonId,
+			@RequestParam(value = PARAMETER_DISTRICT_ID) String districtId) {
+
+		try {
+			return nearMeService.getInterestPoints(provinceId, cantonId,
+					districtId);
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			fileLog.error("InterestPoitLocations error " + e.toString());
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@RequestMapping(value = METHOD_GET_PROMOTIONS)
+	public @ResponseBody List<Promotion> getPromotions(@RequestParam(value = PARAMETER_LATITUDE) String latitude,
+															   @RequestParam(value = PARAMETER_LONGITUDE) String longitude){
+ 
+		try {
+			return nearMeService.getPromotions();
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		return null;
+	}	@RequestMapping(value = METHOD_GET_PROVINCES)
+	public @ResponseBody List<ListaProvincia> getProvinces() {
+		Province response = null;
+		try {
+			response = nearMeService.getProvincesData();
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			fileLog.error("GetProvinces error " + e.toString());
+			e.printStackTrace();
+		}
+		return response.getConsultarProvinciaMsjRespTipo().getListaProvincia();
+	}
+
+	@RequestMapping(value = METHOD_NEARME)
+	public String nearme(Model map, HttpServletRequest request) {
+
+		String company = (String) request.getSession().getAttribute("company");
+		List<ListaCategoriaPuntoInteres> categoriesList = null;
+		List<Promotion> promotions = nearMeService.getPromotions();
+		try {
+			categoriesList = nearMeService.getCategoriesData();
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			fileLog.error("Nearme error " + e.toString());
+			e.printStackTrace();
+		}
+		Rate rate = null;
+		// Call the service RateChange, to get the rate change value
+		try {
+			rate = homeWsClient.getRateChangeValue();
+		} catch (Exception e) {
+			fileLog.error("Rate error " + e.toString());
+			rate = new Rate();
+			rate.setAmmountBuy("0");
+			rate.setAmmountSell("0");
+		}
+
+		map.addAttribute(rate);
+
+		map.addAttribute(ATTRIBUTE_APIKEY, MAPS_API_KEY);
+		map.addAttribute(ATTRIBUTE_CATEGORIES, categoriesList);
+		map.addAttribute("promotions", promotions);
+		map.addAttribute(ATTRIBUTE_ZOOM, MAPS_ZOOM);
+		map.addAttribute("itemList", util.getIdItemsFooter(company));
+		map.addAttribute("menuTit", viewListMenu(company));
+		map.addAttribute("footerCarousel", util.getFooterCarouselHTML());
+		map.addAttribute("company", "?company=" + company);
+
+		return VIEW_NEARME;
+	}
+
+}

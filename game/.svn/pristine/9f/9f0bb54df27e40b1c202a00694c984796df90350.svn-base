@@ -1,0 +1,80 @@
+
+package cr.fi.grupomutual.website.ws;
+
+import groovy.util.logging.Log4j;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.web.client.RestTemplate;
+
+import cr.fi.grupomutual.website.entities.Rate;
+import cr.fi.grupomutual.website.entities.RateChange;
+import cr.fi.grupomutual.website.utilities.Utils;
+import cr.fi.grupomutual.website.utilities.WsClientUtilities;
+import cr.fi.grupomutual.website.utilities.WsClientUtilitiesImpl;
+
+
+/**
+ * Implementation class for home web service requests handler 
+ * @author cvargas-as Avantica Technologies
+ */
+@Log4j
+public class HomeWsClientImpl implements HomeWsClient{	
+	
+	Logger fileLog = Logger.getLogger("file");
+	Utils utils = new Utils();
+	
+	
+	private WsClientUtilities wsClientUtilities = new WsClientUtilitiesImpl();
+	
+	@Value("${mutualapp.wserviceurl}")
+	private String WS_SERVICES_URL;
+	
+	protected static final String CONSULT_TYPE_RATE_CHANGE = "v11:ConsultarTasaCambioMsjSolTipo"; 
+	@Value("${mutualapp.endPointMoney}")
+	protected String END_POINT;
+	
+	protected static final String NAMESPACES =  "\"@xmlns:v11\": \"http://xmlns.grupomutual.fi.cr/ObjetoEmpresarial/DominioProducto/Producto/V1\","; 
+		
+	private String currentDate;
+	
+	private HttpEntity<String> restRequest;
+	
+	@Autowired
+	private RestTemplate restRequestTemplate;
+	
+	public Rate getRateChangeValue() throws RuntimeException {
+		
+		currentDate = utils.getDate();
+		
+		String finalWsUrl = WS_SERVICES_URL + END_POINT; 	
+		String jsonStringRequest = wsClientUtilities.buildJsonStringRequest(CONSULT_TYPE_RATE_CHANGE, NAMESPACES,"1");
+		jsonStringRequest +=  
+				"\"v11:TasaCambio\": {"
+		    	 +"\"v11:fecha\": \"" + currentDate + "\","
+		    	 +"\"v11:montoCompra\": \"10000\","
+		    	 +"\"v11:montoVenta\": \"10000\","
+		    	 +"\"v11:MonedaOrigen\": {"
+		    		+"\"Codigo\": \"1\","
+		            +"\"Nombre\": \"1\","
+		            +"\"Estatus\": \"1\""
+		            +"},"
+		        	  +"\"v11:MonedaDestino\": {"
+		            +"\"Codigo\": \"2\","
+		            +"\"Nombre\": \"1\","
+		            +"\"Estatus\": \"1\""
+		          +"}}}}";
+		
+		
+		restRequest = wsClientUtilities.setRequestHeader(finalWsUrl, jsonStringRequest);
+
+ 		
+		RateChange rateChangeValue = restRequestTemplate.postForObject(finalWsUrl, restRequest, RateChange.class);
+		return new Rate(rateChangeValue);			
+				
+	}
+	
+	
+}

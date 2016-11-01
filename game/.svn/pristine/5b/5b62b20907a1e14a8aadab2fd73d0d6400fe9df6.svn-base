@@ -1,0 +1,320 @@
+package cr.fi.grupomutual.website.entities.locations;
+
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import cr.fi.grupomutual.website.entities.HeaderResponse;
+import cr.fi.grupomutual.website.entities.JsonPhoneValue;
+
+/**
+ * Class to map different interest points data from the web service
+ * 
+ * @author cvargas-as Avantica Technologies
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class InterestPoints {
+
+	@JsonProperty("ConsultarPuntosDeInteresMsjRespTipo")
+	private ConsultarPuntosDeInteresMsjRespTipo consultarPuntosDeInteresMsjRespTipo;
+
+	// getters
+	public ConsultarPuntosDeInteresMsjRespTipo getConsultarPuntosDeInteresMsjRespTipo() {
+		return consultarPuntosDeInteresMsjRespTipo;
+	}
+
+	public void setConsultarPuntosDeInteresMsjRespTipo(
+			ConsultarPuntosDeInteresMsjRespTipo consultarPuntosDeInteresMsjRespTipo) {
+		this.consultarPuntosDeInteresMsjRespTipo = consultarPuntosDeInteresMsjRespTipo;
+	}
+
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	public static class ConsultarPuntosDeInteresMsjRespTipo extends
+			HeaderResponse {
+
+
+		@JsonProperty("ListaPuntoInteres")
+		private List<ListaPuntoInteres> listaPuntoInteres;
+
+		// getters
+
+		public List<ListaPuntoInteres> getListaPuntoInteres() {
+			return listaPuntoInteres;
+		}
+
+		@JsonIgnoreProperties(ignoreUnknown = true)
+		public static class ListaPuntoInteres {
+			@JsonProperty("Codigo")
+			private String code;
+			@JsonProperty("Nombre")
+			private String name;
+
+			@JsonProperty("CategoriaPuntoInteres")
+			private CategoriaPuntoInteres categoriaPuntoInteres;
+
+			@JsonIgnoreProperties(ignoreUnknown = true)
+			public static class CategoriaPuntoInteres {
+				@JsonProperty("Codigo")
+				private String idCategory;
+				@JsonProperty("Descripcion")
+				private String descriptionCategory;
+
+				// getters
+				public String getIdCategory() {
+					return idCategory;
+				}
+
+				public String getDescriptionCategory() {
+					return descriptionCategory;
+				}
+			}
+
+			@JsonProperty("Horario")
+			private List<Horario> schedule;
+
+			@JsonIgnoreProperties(ignoreUnknown = true)
+			public static class Horario {
+				@JsonProperty("Nombre")
+				private String horary;
+
+				// getters
+				public String getHorary() {
+					return horary;
+				}
+			}
+
+			@JsonProperty("Direccion")
+			private Direccion address;
+
+			@JsonIgnoreProperties(ignoreUnknown = true)
+			public static class Direccion {
+
+				@JsonProperty("Direccion")
+				private String address;
+				@JsonProperty("Latitud")
+				private String latitude;
+				@JsonProperty("Longitud")
+				private String longitude;
+				@JsonProperty("Distrito")
+				private LocationValue idDistrict;
+				@JsonProperty("Provincia")
+				private LocationValue idProvince;
+				@JsonProperty("Canton")
+				private LocationValue idCanton;
+
+				
+				public String getAddress() {
+					return address;
+				}
+
+				public void setAddress(String address) {
+					this.address = address;
+				}
+
+				public String getLatitude() {
+					return latitude;
+				}
+
+				public void setLatitude(String latitude) {
+					this.latitude = latitude;
+				}
+
+				public String getLongitude() {
+					return longitude;
+				}
+
+				public void setLongitude(String longitude) {
+					this.longitude = longitude;
+				}
+
+				public void setIdDistrict(LocationValue idDistrict) {
+					this.idDistrict = idDistrict;
+				}
+
+				public void setIdProvince(LocationValue idProvince) {
+					this.idProvince = idProvince;
+				}
+
+				public void setIdCanton(LocationValue idCanton) {
+					this.idCanton = idCanton;
+				}
+
+				public LocationValue getIdDistrict() {
+					return idDistrict;
+				}
+
+				public LocationValue getIdProvince() {
+					return idProvince;
+				}
+
+				public LocationValue getIdCanton() {
+					return idCanton;
+				}
+			}
+
+			@JsonProperty("Telefono")
+			private List<Telefono> phone;
+
+			@JsonIgnoreProperties(ignoreUnknown = true)
+			public static class Telefono {
+
+				@JsonProperty("Numero")
+				private String phone;
+				@JsonProperty("TipoTelefono")
+				private TypePhone type;
+				
+				@JsonIgnoreProperties(ignoreUnknown = true)
+				public static class TypePhone {
+					@JsonProperty("Nombre")
+					private String name;
+				}
+				
+				public String getPhone() {
+					return phone;
+				}
+				public void setPhone(String phone) {
+					this.phone = phone;
+				}
+			
+
+				
+			}
+
+			@JsonProperty("Enlace")
+			private String wazeLink;
+
+			@JsonProperty("InformacionAdicional")
+			private String additionalInfo;
+
+			// getters
+			public String getCode() {
+				return code;
+			}
+
+			public String getName() {
+				return name;
+			}
+
+			public String getWazeLink() {
+				return wazeLink;
+			}
+
+			public String getAdditionalInfo() {
+				return additionalInfo;
+			}
+
+			public CategoriaPuntoInteres getCategoriaPuntoInteres() {
+				return categoriaPuntoInteres;
+			}
+
+			public List<Horario> getHorario() {
+				return schedule;
+			}
+
+			public Direccion getDireccion() {
+				return address;
+			}
+
+			public List<Telefono> getTelefono() {
+				return phone;
+			}
+
+			@JsonProperty("Imagen")
+			private Imagen image;
+			@JsonIgnoreProperties(ignoreUnknown = true)
+			public static class Imagen {
+				@JsonProperty("Url")
+				private String url;
+
+				public String getUrl() {
+					return url;
+				}
+
+				public void setUrl(String url) {
+					this.url = url;
+				}
+				
+				
+			}
+			
+			@JsonProperty("CorreoGrupo")
+			private String email;
+			@JsonProperty("NombreGerente")
+			private String nameManager;
+
+			public List<Horario> getSchedule() {
+				return schedule;
+			}
+
+			public void setSchedule(List<Horario> schedule) {
+				this.schedule = schedule;
+			}
+
+			public Direccion getAddress() {
+				return address;
+			}
+
+			public void setAddress(Direccion address) {
+				this.address = address;
+			}
+
+			public List<Telefono> getPhone() {
+				return phone;
+			}
+
+			public void setPhone(List<Telefono> phone) {
+				this.phone = phone;
+			}
+
+		
+
+			public Imagen getImage() {
+				return image;
+			}
+
+			public void setImage(Imagen image) {
+				this.image = image;
+			}
+
+			public String getEmail() {
+				return email;
+			}
+
+			public void setEmail(String email) {
+				this.email = email;
+			}
+
+			public String getNameManager() {
+				return nameManager;
+			}
+
+			public void setNameManager(String nameManager) {
+				this.nameManager = nameManager;
+			}
+
+			public void setCode(String code) {
+				this.code = code;
+			}
+
+			public void setName(String name) {
+				this.name = name;
+			}
+
+			public void setCategoriaPuntoInteres(
+					CategoriaPuntoInteres categoriaPuntoInteres) {
+				this.categoriaPuntoInteres = categoriaPuntoInteres;
+			}
+
+			public void setWazeLink(String wazeLink) {
+				this.wazeLink = wazeLink;
+			}
+
+			public void setAdditionalInfo(String additionalInfo) {
+				this.additionalInfo = additionalInfo;
+			}
+
+		}
+
+	}
+}

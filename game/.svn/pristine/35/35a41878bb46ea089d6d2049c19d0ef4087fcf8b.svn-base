@@ -1,0 +1,55 @@
+<div class="row">
+	<div class="col-xs-7 marker-details-div" style="margin-left: 18px">
+	<br />
+	<h4>Detalle sucursal : {name}</h4>
+		<div class="box">
+			<table class="table table-striped ">	
+				<tbody>
+					{schedule}	
+					{phone}	
+					{fax}					
+					<tr>
+						<td >
+							Direcci&oacute;n
+						</td>
+						<td colspan="2">
+							{address}
+						</td>
+					</tr>							
+				</tbody>			
+			</table>					
+		</div>
+		<div>
+			<a class="ajax-link btn btn-default btn-label-left go-back"><span><i class="fa fa-reply"></i></span> <span class="custom-span" > Ir atr&aacute;s</span></a>
+		</div>
+	</div>
+</div>
+
+<script>
+
+$(function() {
+	
+	$('.go-back').click(function(){
+		
+		$('.preloader').show();
+    	$.ajax({
+    		mimeType: 'text/html; charset=utf-8', // ! Need set mimeType only when run from local file
+    		url: "/resources/templates/findus.html",
+    		type: 'GET',
+    		success: function(data) {
+    			
+    			$('#ajax-content').html(data);
+    			$('.preloader').hide();
+    		},
+    		error: function (jqXHR, textStatus, errorThrown) {
+    			console.log(errorThrown);
+    		},
+    		dataType: "html",
+    		async: false
+    	});
+	})
+});
+	
+</script>
+
+

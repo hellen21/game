@@ -1,0 +1,22 @@
+package cr.fi.grupomutual.website.entities.locations;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+/**
+ * Class to map the value of json object data from the web service 
+ * @author cvargas-as Avantica Technologies
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class LocationValue {
+	
+
+	@JsonProperty("Codigo")
+	private String code;	
+	@JsonProperty("Nombre")
+	private String name;
+	
+	public String getCode(){ return code; }
+	public String getName(){ return name; }
+	
+}

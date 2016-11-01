@@ -1,0 +1,82 @@
+	
+package cr.fi.grupomutual.website.ws;
+
+
+import groovy.util.logging.Log4j;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.web.client.RestTemplate;
+
+import cr.fi.grupomutual.website.entities.ContentSection;
+import cr.fi.grupomutual.website.entities.Structure;
+import cr.fi.grupomutual.website.utilities.Utils;
+import cr.fi.grupomutual.website.utilities.WsClientUtilities;
+import cr.fi.grupomutual.website.utilities.WsClientUtilitiesImpl;
+
+@Log4j
+public class SectionWsClientImpl implements SectionWsClient {
+
+		
+	Utils utils = new Utils();
+     Logger fileLog = Logger.getLogger("file");
+	private WsClientUtilities wsClientUtilities = new WsClientUtilitiesImpl();
+	
+	@Value("${mutualapp.wserviceurl}")
+	private String WS_SERVICES_URL;
+	
+	protected static final String CONSULT_TYPE_SECTION = "ConsultarContenidoSeccionMsjSolTipo"; 
+	@Value("${mutualapp.endPointSection}")
+	protected String END_POINT_SECTION;
+	
+	protected static final String CONSULT_TYPE_ESTRUC = "ConsultarEstructuraSitioMsjSolTipo"; 
+	@Value("${mutualapp.endPointSection}")
+	protected String END_POINT_ESTRUC;
+	
+	protected static final String NAMESPACES =  "\"@xmlns:v11\": \"http://xmlns.grupomutual.fi.cr/ObjetoEmpresarial/DominioProducto/Producto/V1\","; 
+	
+
+	
+	private HttpEntity<String> restRequest;
+	@Autowired
+	private RestTemplate restRequestTemplate;
+	
+	public Structure getStructureSite(String company) throws RuntimeException{
+		
+		try {
+			String finalWsUrl = WS_SERVICES_URL + END_POINT_ESTRUC; 
+			String jsonStringRequest= wsClientUtilities.buildJsonStringRequest(CONSULT_TYPE_ESTRUC, NAMESPACES,company);
+			jsonStringRequest = jsonStringRequest.substring(0, jsonStringRequest.length()-1);
+			jsonStringRequest += "}}";
+			restRequest= wsClientUtilities.setRequestHeader(finalWsUrl, jsonStringRequest);
+			Structure struc= restRequestTemplate.postForObject(finalWsUrl, restRequest, Structure.class);
+						return struc;
+		} catch (Exception e) {
+			return null;
+		}
+
+	}
+	
+	public ContentSection getContentSection(String section, String company) throws RuntimeException {
+		
+		String finalWsUrl = WS_SERVICES_URL + END_POINT_SECTION; 	
+		String jsonStringRequest = wsClientUtilities.buildJsonStringRequest(CONSULT_TYPE_SECTION, "",company);
+		jsonStringRequest +=  
+				"\"Seccion\": {"
+		    	 +"\"Codigo\": \"" + section + "\""
+		    	 +"}}}";
+		
+		restRequest = wsClientUtilities.setRequestHeader(finalWsUrl, jsonStringRequest);
+
+		try {
+			ContentSection contentSection = restRequestTemplate.postForObject(finalWsUrl, restRequest, ContentSection.class);
+			return contentSection;	
+		} catch (Exception e) {
+			fileLog.error("Content errors "+e.toString());
+			return null;
+		}			
+	}
+}
+		

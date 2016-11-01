@@ -1,0 +1,20 @@
+package cr.fi.grupomutual.website.ws;
+
+
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+
+import cr.fi.grupomutual.website.entities.ContentSection;
+import cr.fi.grupomutual.website.entities.Structure;
+
+
+public interface SectionWsClient {
+	
+	@Cacheable("structAppCache")
+	public Structure getStructureSite(String company);
+	
+	@Cacheable("contentAppCache")
+	public ContentSection getContentSection(String section, String company);
+
+}

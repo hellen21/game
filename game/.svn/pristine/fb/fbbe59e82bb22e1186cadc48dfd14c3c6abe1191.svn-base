@@ -1,0 +1,40 @@
+package cr.fi.grupomutual.website.entities.locations;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import cr.fi.grupomutual.website.entities.HeaderResponse;
+
+
+
+/**
+ * Class to map districts data from the web service 
+ * @author cvargas-as Avantica Technologies
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class District{
+	
+	@JsonProperty("ConsultarDistritoMsjRespTipo")
+	private ConsultarDistritoMsjRespTipo consultarDistritoMsjRespTipo;
+
+	// getters
+	public ConsultarDistritoMsjRespTipo getConsultarDistritoMsjRespTipo(){ return consultarDistritoMsjRespTipo; }
+	
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	public static class ConsultarDistritoMsjRespTipo extends HeaderResponse{
+		
+		@JsonProperty("ListaDistrito")
+		private List<ListaDistrito> listaDistrito;
+
+		// getters
+		public List<ListaDistrito> getListaDistrito(){ return listaDistrito; }
+		
+		@JsonIgnoreProperties(ignoreUnknown = true)
+		public static class ListaDistrito extends Location {
+						
+			
+		}
+		
+	}
+}

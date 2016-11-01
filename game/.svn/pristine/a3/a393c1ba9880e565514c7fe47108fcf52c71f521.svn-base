@@ -1,0 +1,30 @@
+package cr.fi.grupomutual.website.entities;
+
+import java.util.ArrayList;
+
+public class MatchContent {
+	ArrayList<String> sliderList = new ArrayList<String>();
+	ArrayList<String> casillaList = new ArrayList<String>();
+	ArrayList<String> carouselList = new ArrayList<String>();
+	public ArrayList<String> getSliderList() {
+		return sliderList;
+	}
+	public void setSliderList(ArrayList<String> sliderList) {
+		this.sliderList = sliderList;
+	}
+	public ArrayList<String> getCasillaList() {
+		return casillaList;
+	}
+	public void setCasillaList(ArrayList<String> casillaList) {
+		this.casillaList = casillaList;
+	}
+	public ArrayList<String> getCarouselList() {
+		return carouselList;
+	}
+	public void setCarouselList(ArrayList<String> carouselList) {
+		this.carouselList = carouselList;
+	}
+	
+	
+	
+}

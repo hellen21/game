@@ -1,0 +1,268 @@
+package cr.fi.grupomutual.website.ws;
+
+import groovy.util.logging.Log4j;
+
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.web.client.RestTemplate;
+
+import cr.fi.grupomutual.website.entities.PromotionsWsResponse;
+import cr.fi.grupomutual.website.entities.PromotionsWsResponse.PromotionResponse.Promotion;
+import cr.fi.grupomutual.website.entities.locations.Canton;
+import cr.fi.grupomutual.website.entities.locations.Category;
+import cr.fi.grupomutual.website.entities.locations.Category.ConsultarCategoriasPuntoDeInteresMsjRespTipo.ListaCategoriaPuntoInteres;
+import cr.fi.grupomutual.website.entities.locations.District;
+import cr.fi.grupomutual.website.entities.locations.InterestPoints;
+import cr.fi.grupomutual.website.entities.locations.InterestPoints.ConsultarPuntosDeInteresMsjRespTipo.ListaPuntoInteres;
+import cr.fi.grupomutual.website.entities.locations.Province;
+import cr.fi.grupomutual.website.utilities.WsClientUtilities;
+//import fi.cr.gmalv.mutualmovil.exception.HeaderResponseException;
+
+
+/**
+ * Implementation class for find us web service requests handler 
+ * @author cvargas-as Avantica Technologies
+ */
+@Log4j
+public class NearMeWsClientImpl implements NearMeWsClient {
+
+	Logger fileLog = Logger.getLogger("file");
+	
+	@Autowired
+	private RestTemplate restRequestTemplate;
+	
+	@Autowired
+	private WsClientUtilities wsClientUtilities;
+
+	//@Value("${mutualapp.headerresponseexceptionmsg}")
+	private String HEADER_RESPONSE_EXPECTION_MSG;
+	
+	@Value("${mutualapp.wserviceurl}")
+	private String WS_SERVICES_URL;
+	
+	protected static final String CONSULT_TYPE_CANTON = "ConsultarCantonMsjSolTipo"; 
+	protected static final String CONSULT_TYPE_DISTRICT = "ConsultarDistritoMsjSolTipo"; 
+	protected static final String CONSULT_TYPE_INTEREST_POINTS = "ConsultarPuntosDeInteresMsjSolTipo";	
+	protected static final String CONSULT_TYPE_PROVINCE = "ConsultarProvinciaMsjSolTipo";
+	protected static final String CONSULT_PROMOTIONS = "v1:ConsultarPromocionesMsjSolTipo";	
+	
+	protected static final String NAMESPACES_PRODUCTO =  "\"@xmlns:v1\": \"http://xmlns.grupomutual.fi.cr/ObjetoEmpresarial/DominioProducto/Producto/V1\",";	
+	
+	@Value("${mutualapp.endPointSection}")
+	protected String END_POINT;
+	
+	protected static final String CATEGORY_CODE = "1"; 
+	protected static final String COUNTRY_CODE = "1"; 	
+	protected static final String NULL_DEFAULT_VALUE = "1.051732E7";
+	protected static final String SCALE = "5000"; //meters
+	
+	protected static final String NAMESPACES = ""; 
+	
+	protected static final String CONSULT_TYPE_CATEGORIES = "ConsultarCategoriasPuntoDeInteresMsjSolTipo"; 
+	
+	private HttpEntity<String> restRequest;
+
+	String finalWsUrl ; 
+		
+	public Canton getCantonsData(String provinceId) {
+
+		finalWsUrl = WS_SERVICES_URL + END_POINT;
+		String jsonStringRequest = wsClientUtilities.buildJsonStringRequest(CONSULT_TYPE_CANTON, NAMESPACES,"");
+		jsonStringRequest += 
+			    "\"Consulta\": \"AVANZADA\","
+					+"\"DatosConsulta\": {"
+				     +"\"CodigoPais\": \"" + COUNTRY_CODE + "\", "
+				      +"\"CodigoProvincia\": \"" + provinceId +"\" }" 
+				  +"}" 
+				+"}";
+
+		HttpEntity<String> restRequest; 
+		restRequest = wsClientUtilities.setRequestHeader(finalWsUrl, jsonStringRequest);
+        
+		Canton cantonData = restRequestTemplate.postForObject(finalWsUrl, restRequest, Canton.class);
+	    return cantonData;	
+	}
+	
+	public District getDistrictsData(String cantonId, String provinceId) throws RuntimeException {
+
+		finalWsUrl = WS_SERVICES_URL + END_POINT;
+		String jsonStringRequest = wsClientUtilities.buildJsonStringRequest(CONSULT_TYPE_DISTRICT, NAMESPACES,"");
+		jsonStringRequest += 
+			    "\"Consulta\": \"AVANZADA\","
+					+"\"DatosConsulta\": {"
+				     +"\"CodigoCanton\": \"" + cantonId +"\", " 
+					  +"\"CodigoPais\": \"" + COUNTRY_CODE + "\", " 
+					  +"\"CodigoProvincia\": \"" + provinceId +"\" }" 				      
+				  +"}" 
+				+"}";
+	
+		HttpEntity<String> restRequest;
+		restRequest = wsClientUtilities.setRequestHeader(finalWsUrl, jsonStringRequest);
+	    
+		District districtData = restRequestTemplate.postForObject(finalWsUrl, restRequest, District.class);
+	    return districtData;
+	}
+	
+	public List<ListaPuntoInteres> getInterestPoints(String latitude, String longitude)throws RuntimeException  {
+
+		finalWsUrl = WS_SERVICES_URL + END_POINT;
+		String jsonStringRequest = wsClientUtilities.buildJsonStringRequest(CONSULT_TYPE_INTEREST_POINTS, NAMESPACES,"");
+		jsonStringRequest += 
+			    "\"Consulta\": \"AVANZADA\","
+					+"\"DatosConsulta\": {"
+					 +"\"Escala\": \"" + SCALE + "\" ," 
+					 +"\"Latitud\": \"" + latitude + "\" ," 
+					 +"\"Longitud\": \"" + longitude + "\" }" 
+				  +"}" 
+				+"}";
+
+		HttpEntity<String> restRequest;
+		restRequest = wsClientUtilities.setRequestHeader(finalWsUrl, jsonStringRequest);
+       
+		InterestPoints interestPointsData = restRequestTemplate.postForObject(finalWsUrl, restRequest, InterestPoints.class);
+//		boolean isRequestStatusOk = wsClientUtilities.checkRequestHeaderStatusResponse(interestPointsData.getConsultarPuntosDeInteresMsjRespTipo().getHeadResp());
+//		
+//		if(isRequestStatusOk){
+			List<ListaPuntoInteres> interestPointsList = interestPointsData.getConsultarPuntosDeInteresMsjRespTipo().getListaPuntoInteres();
+		    return interestPointsList;	
+		//}
+		
+	}
+	
+	public List<ListaPuntoInteres> getInterestPoints(String provinceId, String cantonId, String districtId) throws RuntimeException {
+
+		finalWsUrl = WS_SERVICES_URL + END_POINT;
+		String jsonStringRequest = wsClientUtilities.buildJsonStringRequest(CONSULT_TYPE_INTEREST_POINTS, NAMESPACES,"");
+		String addCantonToSearch = cantonId.equals("0") ? "": "\"CodigoCanton\": \"" + cantonId + "\", ";
+		String addDistrictToSearch = districtId.equals("0") ? "": "\"CodigoDistrito\": \"" + districtId + "\" ,";
+		jsonStringRequest += 
+			    "\"Consulta\": \"AVANZADA\","
+					+"\"DatosConsulta\": {"
+				     + addCantonToSearch
+					/* +"\"CodigoCategoriaPuntoInteres\": \"" + CATEGORY_CODE + "\" ,"*/
+					 + addDistrictToSearch
+					 +"\"CodigoPais\": \"" + COUNTRY_CODE + "\" ,"
+					 +"\"CodigoProvincia\": \"" + provinceId + "\" }" 
+				  +"}" 
+				+"}";
+
+		HttpEntity<String> restRequest;
+		restRequest = wsClientUtilities.setRequestHeader(finalWsUrl, jsonStringRequest);
+        
+		InterestPoints interestPointsData = restRequestTemplate.postForObject(finalWsUrl, restRequest, InterestPoints.class);
+//		boolean isRequestStatusOk = wsClientUtilities.checkRequestHeaderStatusResponse(interestPointsData.getConsultarPuntosDeInteresMsjRespTipo().getCabeceraResp());
+//		
+//		if(isRequestStatusOk){
+			List<ListaPuntoInteres> interestPointsList = interestPointsData.getConsultarPuntosDeInteresMsjRespTipo().getListaPuntoInteres();
+			
+	    return interestPointsList;	
+//		}
+		
+	}
+	
+	public List<ListaPuntoInteres> getPromotions(String latitude, String longitude)throws RuntimeException {
+		
+		return null;
+		
+	}
+	
+	public List<Promotion> getPromotions() throws RuntimeException {
+
+		finalWsUrl = WS_SERVICES_URL + END_POINT;
+		String jsonStringRequest = wsClientUtilities.buildJsonStringRequest(CONSULT_PROMOTIONS, NAMESPACES_PRODUCTO, "");
+		jsonStringRequest += 
+			    "\"v1:Promocion\": {"
+			    		 +"\"v1:Estado\": \"" + "A" + "\"" 
+					 +"}" 
+				+"}}";
+
+	      
+		restRequest = wsClientUtilities.setRequestHeader(finalWsUrl, jsonStringRequest);
+        
+		PromotionsWsResponse promotion = restRequestTemplate.postForObject(finalWsUrl, restRequest, PromotionsWsResponse.class);
+	
+			List<Promotion> promotions = promotion.getPromotionResponse().getPromotions();
+		    return promotions;	
+		
+		
+	}
+	
+	
+	public Province getProvincesData() {
+
+		finalWsUrl = WS_SERVICES_URL + END_POINT;
+		String jsonStringRequest = wsClientUtilities.buildJsonStringRequest(CONSULT_TYPE_PROVINCE, NAMESPACES,"");
+		jsonStringRequest += 
+			    "\"Consulta\": \"AVANZADA\","
+					+"\"DatosConsulta\": {"
+				     +"\"CodigoPais\": \"" + COUNTRY_CODE + "\" }" 
+				  +"}" 
+				+"}";
+
+	      
+		HttpEntity<String> restRequest;
+		restRequest = wsClientUtilities.setRequestHeader(finalWsUrl, jsonStringRequest);
+        
+        Province provinceData = restRequestTemplate.postForObject(finalWsUrl, restRequest, Province.class);
+//	    boolean isRequestStatusOk = wsClientUtilities.checkRequestHeaderStatusResponse(provinceData.getConsultarProvinciaMsjRespTipo().getCabeceraResp());
+//		
+//	    if(isRequestStatusOk){
+//	    	
+//		}
+        return provinceData;
+	}
+	public List<ListaCategoriaPuntoInteres> getCategoriesData()throws RuntimeException {
+		String finalWsUrl = WS_SERVICES_URL + END_POINT; 		
+		
+		String jsonStringRequest = wsClientUtilities.buildJsonStringRequest(CONSULT_TYPE_CATEGORIES, NAMESPACES,"");
+		jsonStringRequest += "\"Consulta\": \"AVANZADA\"}}";
+
+		HttpEntity<String> restRequest;
+		restRequest = wsClientUtilities.setRequestHeader(finalWsUrl, jsonStringRequest);
+        
+		Category categoryData = restRequestTemplate.postForObject(finalWsUrl, restRequest, Category.class);
+//		boolean isRequestStatusOk = wsClientUtilities.checkRequestHeaderStatusResponse(categoryData.getConsultarCategoriasPuntoDeInteresMsjRespTipo().getHeadResp());
+		
+//		if(isRequestStatusOk){
+			List<ListaCategoriaPuntoInteres> categoriesList = categoryData.getConsultarCategoriasPuntoDeInteresMsjRespTipo().getListaCategoriaPuntoInteres();
+			return categoriesList;				
+//		}
+//		else{
+//				
+//		}
+	}
+	
+	
+	
+	public List<ListaPuntoInteres> getMutualBenefict() throws RuntimeException {
+
+		finalWsUrl = WS_SERVICES_URL + END_POINT;
+		String jsonStringRequest = wsClientUtilities.buildJsonStringRequest(CONSULT_TYPE_INTEREST_POINTS, NAMESPACES,"");
+		
+		jsonStringRequest += 
+			    "\"Consulta\": \"AVANZADA\","
+					+"\"DatosConsulta\": {"
+							+"\"CodigoCategoriaPuntoInteres\": \"" + 3 +"\" ," 
+							+"\"CodigoPais\": \"" + COUNTRY_CODE + "\" }" 
+				  +"}" 
+				+"}";
+
+		HttpEntity<String> restRequest;
+		restRequest = wsClientUtilities.setRequestHeader(finalWsUrl, jsonStringRequest);
+        
+		InterestPoints interestPointsData = restRequestTemplate.postForObject(finalWsUrl, restRequest, InterestPoints.class);
+//		boolean isRequestStatusOk = wsClientUtilities.checkRequestHeaderStatusResponse(interestPointsData.getConsultarPuntosDeInteresMsjRespTipo().getCabeceraResp());
+//		
+//		if(isRequestStatusOk){
+		List<ListaPuntoInteres> interestPointsList = interestPointsData.getConsultarPuntosDeInteresMsjRespTipo().getListaPuntoInteres();
+			
+	    return interestPointsList;	
+//		}
+		
+	}
+		
+}

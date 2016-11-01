@@ -1,0 +1,42 @@
+package cr.fi.grupomutual.website.ws;
+
+import java.util.List;
+
+import org.springframework.cache.annotation.Cacheable;
+
+import cr.fi.grupomutual.website.entities.PromotionsWsResponse.PromotionResponse.Promotion;
+import cr.fi.grupomutual.website.entities.locations.Canton;
+import cr.fi.grupomutual.website.entities.locations.District;
+import cr.fi.grupomutual.website.entities.locations.Province;
+import cr.fi.grupomutual.website.entities.locations.Category.ConsultarCategoriasPuntoDeInteresMsjRespTipo.ListaCategoriaPuntoInteres;
+import cr.fi.grupomutual.website.entities.locations.InterestPoints.ConsultarPuntosDeInteresMsjRespTipo.ListaPuntoInteres;
+
+public interface NearMeWsClient {
+
+//	@Cacheable("nearMeAppCache")
+	public Canton getCantonsData(String provinceId);
+
+//	@Cacheable("nearMeAppCache")
+	public District getDistrictsData(String cantonId, String provinceId);
+
+//	@Cacheable("nearMeAppCache")
+	public List<ListaPuntoInteres> getInterestPoints(String latitude,
+			String longitude);
+
+//	@Cacheable("nearMeAppCache")
+	public List<ListaPuntoInteres> getInterestPoints(String provinceId,
+			String cantonId, String districtId);
+
+//	@Cacheable("nearMeAppCache")
+	public List<ListaPuntoInteres> getPromotions(String latitude,
+			String longitude);
+	
+//	@Cacheable("nearMeAppCache")
+	public Province getProvincesData();
+
+//	@Cacheable("nearMeAppCache")
+	public List<ListaCategoriaPuntoInteres> getCategoriesData();
+
+	public List<ListaPuntoInteres> getMutualBenefict() ;
+	public List<Promotion> getPromotions() throws RuntimeException;
+}
