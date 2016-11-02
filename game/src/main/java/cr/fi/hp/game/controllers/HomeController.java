@@ -110,9 +110,13 @@ public class HomeController{
 	}
 	
 	@RequestMapping(value = READ_FILE, method = RequestMethod.GET)
-	public @ResponseBody boolean getAccountMovements(@RequestParam(value = "text") String text){
+	public @ResponseBody boolean getFiles(@RequestParam(value = "text") String text, HttpServletResponse response,HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException{
 		text=text.replaceAll("\\s","");
-		util.searchMath(text);
+		
+		ObjectMapper mapper = new ObjectMapper();	
+		String parameterValues = request.getParameter("text"); 
+		Object listSimpleGame = mapper.readValue(parameterValues, Object[].class);
+		ArrayList<Player> ls = (ArrayList<Player>) listSimpleGame;
 		System.out.println(text);
 		
 	    return true;

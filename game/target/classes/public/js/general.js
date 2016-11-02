@@ -34,6 +34,7 @@ window.addEventListener('load', inicio, false);
 				}
 			});
     }
+    $(":file").filestyle({icon: false});
     
     $('#simple #addPlayer').click(function(evt){
     	evt.preventDefault();
