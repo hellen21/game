@@ -70,7 +70,7 @@ window.addEventListener('load', inicio, false);
     $('#champions #game').click(function(evt){
     	evt.preventDefault();
     	var listPlayerSimpleString = JSON.stringify(listPlayerSimple);
-    	
+    	listPlayerSimple = [];
     	var data = 'simple=' + JSON.stringify(listPlayerSimple)+
     	'&tournament='+JSON.stringify(tournament)
     	+'&champions='+JSON.stringify(championship);
@@ -102,6 +102,10 @@ window.addEventListener('load', inicio, false);
     $('#champions #addPlayer').click(function(evt){
     	evt.preventDefault();
     	var isTwoPlayer = addPlayerSimple('#champions');
+    	if(listPlayerSimple.length == 2){
+    		tournament.push(listPlayerSimple);
+    		listPlayerSimple = [];
+    	}
     	if(!isTwoPlayer){
     		$('.numPlayer').text('Player 2');
     		$('#tournamentForm').trigger('reset');
@@ -109,8 +113,6 @@ window.addEventListener('load', inicio, false);
     	if(isTwoPlayer == true){
     		$('.numPlayer').text('Player 1');
     		$('#tournamentForm').trigger('reset');
-    		tournament.push(listPlayerSimple);
-    		listPlayerSimple = [];
     	}
     });
     
@@ -124,6 +126,7 @@ window.addEventListener('load', inicio, false);
     	}else{
     		championship.push(tournament);
     		tournament = [];
+    		listPlayerSimple = [];
     	}
     
     });
