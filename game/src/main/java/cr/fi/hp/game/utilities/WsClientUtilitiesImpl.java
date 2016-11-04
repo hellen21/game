@@ -9,12 +9,6 @@ import org.springframework.stereotype.Service;
 import cr.fi.hp.game.entities.Championship;
 import cr.fi.hp.game.entities.Player;
 
-/**
- * Class for ws client utilities system functions
- * 
- * @author cvargas-as Avantica Technologies
- */
-
 @Service
 public class WsClientUtilitiesImpl implements WsClientUtilities {
 

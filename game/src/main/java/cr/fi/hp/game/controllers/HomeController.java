@@ -3,7 +3,6 @@ package cr.fi.hp.game.controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,22 +20,12 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import cr.fi.hp.game.entities.Champions;
 import cr.fi.hp.game.entities.Championship;
 import cr.fi.hp.game.entities.Player;
-import cr.fi.hp.game.entities.Tournament;
 import cr.fi.hp.game.utilities.Constant;
 import cr.fi.hp.game.utilities.Utils;
 import cr.fi.hp.game.utilities.WsClientUtilities;
 
-/**
- * Class to map header response data from the web service 
- * @author hcampos-as Avantica Technologies
- */
-/**
- * @author hcampos-as
- *
- */
 
 @Controller
 public class HomeController{

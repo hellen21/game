@@ -8,12 +8,6 @@ import org.springframework.http.HttpEntity;
 import cr.fi.hp.game.entities.Championship;
 import cr.fi.hp.game.entities.Player;
 
-
-
-/**
- * Interface for ws client utilities class 
- * @author cvargas-as Avantica Technologies
- */
 public interface WsClientUtilities {	
 
 	public Player searchWin(List<Player> players);

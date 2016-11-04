@@ -15,15 +15,10 @@ public class Constant {
 	public static final String LIST_PLAYER = "\\[\"[a-zA-Z]+\",\"[a-zA-Z]+\"\\]";
 	public static final String ELEMENT_REGEX  = "[a-zA-Z]+";
 	
-	
-	public static final String SLIDER_REGEX = "\\[+\\[Slider\\-+[\\d]+\\]+\\]";
-	public static final String CASILLA_REGEX = "\\[+\\[Casilla\\-+[\\d]+\\]+\\]";
-	public static final String TAG_ID_REGEX = "([A-Z])\\w+\\-+[\\d]+";
-	
-	private static Player player1 = new Player("Hellen", "R");
-	private static Player player2 = new Player("Jessica", "S");
-	private static Player player3 = new Player("Alondra", "P");
-	private static Player player4 = new Player("Jacqueline", "S");
+	private static Player player1 = new Player("Pedro", "R");
+	private static Player player2 = new Player("Carlos", "S");
+	private static Player player3 = new Player("Fernando", "P");
+	private static Player player4 = new Player("Roy", "S");
 
 	
 	public final static ArrayList<Player> listGroup1 = new ArrayList<Player>() {
