@@ -41,34 +41,8 @@ public class Utils {
 				
 			}
 
-			/*pattern = Pattern.compile(Constant.TAG_REGEX);
-			m = pattern.matcher(text);
-			if (m.find()) {
-				tag = m.group();
-			}
-
-			pattern = Pattern.compile(Constant.ID_REGEX);
-			m = pattern.matcher(text);
-			if (m.find()) {
-				id = m.group();
-			}*/
-
-			/*Tags currentTag = Tags.valueOf(tag.toUpperCase());
-			switch (currentTag) {
-			case SLIDER:
-				sliderList.add(id);
-				break;
-			case CASILLA:
-				casillaList.add(id);
-				break;
-			case CARROUSEL:
-				carouselList.add(id);
-				break;
-			}*/
+			
 		}
-	/*	matContent.setCarouselList(carouselList);
-		matContent.setCasillaList(casillaList);
-		matContent.setSliderList(sliderList);*/
 		return null;
 	}
 	
