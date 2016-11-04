@@ -6,11 +6,55 @@
 
   <div class="tab-content">
     <div id="simple" class="tab-pane fade in active">
-    	<h3 th:text="#{label.game.simple}"></h3>
-      	<div class="col-md-8">
-			<form class="form-inline" id="simpleForm">
+    	<h3 class="titleGame" th:text="#{label.game.simple}"></h3>
+      	<div class="col-md-6 colorWhite">
+			<form class="form-inline" id="simpleForm" data-toggle="validator">
 				<h3 class="numPlayer" th:text="#{label.game.player1}"></h3>
     			<div class="form-group">
+					<label for="name" th:text="#{label.game.name}"></label>
+					<input type="text" id="name"  class="form-control" data-icon="false" required="required" data-placeholder="Name" />
+				</div>
+				<div class="form-group">
+					<label for="name" th:text="#{label.game.strategy}"></label>	
+					<input type="text" id="strategy" class="form-control" data-icon="false" required="required" data-placeholder="Strategy"/>
+				</div>
+				<button type="submit" class="btn btn-primary btn-lg btn-block" id="addPlayer" th:text="#{label.game.addPlayer}"></button>
+			</form>
+		</div>
+		
+		<div class="col-md-6">
+			<h3 th:text="#{label.game.winer}"></h3>
+			<table class="table table-striped">
+				  <thead>
+				    <tr>
+				      <th>#</th>
+				      <th th:text="#{label.game.name}"></th>
+				      <th th:text="#{label.game.strategy}"></th>
+				      <th th:text="#{label.game.points}"></th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr>
+				      <th scope="row">1</th>
+				      <td class="name"></td>
+				      <td class="strategy"></td>
+				      <td class="points"></td>
+				    </tr>
+				  </tbody>
+			</table>
+		</div>
+		
+    </div>
+    <div id="champions" class="tab-pane fade">
+      	<h3 class="titleGame" th:text="#{label.game.champions}"></h3>
+      	<div class="tournamentTitle">
+      		<h2 th:text="#{label.game.tournament}"></h2>
+      		<button type="submit" class="btn btn-default" id="newTournament" th:text="#{label.game.newTournament}"></button>
+      	</div>
+      	<div class="col-md-6 colorWhite">
+			<form class="form-inline" id="tournamentForm">
+				<h3 class="numPlayer" th:text="#{label.game.player1}"></h3>
+	    		<div class="form-group">
 					<label for="name" th:text="#{label.game.name}"></label>
 					<input type="text" id="name"  class="form-control" data-icon="false" data-placeholder="Name" />
 				</div>
@@ -19,10 +63,12 @@
 					<input type="text" id="strategy" class="form-control" data-icon="false" data-placeholder="Strategy"/>
 				</div>
 				<button type="submit" class="btn btn-default" id="addPlayer" th:text="#{label.game.addPlayer}"></button>
-			</form>
+			</form>	
+			<div>
+				<button type="submit" class="btn btn-primary btn-lg btn-block" id="game" th:text="#{label.game.game}"></button>
+			</div>
 		</div>
-		
-		<div class="col-md-8">
+		<div class="col-md-6">
 			<h3 th:text="#{label.game.winer}"></h3>
 			<table class="table table-striped">
 				  <thead>
@@ -30,6 +76,7 @@
 				      <th>#</th>
 				      <th th:text="#{label.game.name}"></th>
 				      <th th:text="#{label.game.strategy}"></th>
+				      <th th:text="#{label.game.points}"></th>
 				    </tr>
 				  </thead>
 				  <tbody>
@@ -37,36 +84,14 @@
 				      <th scope="row">1</th>
 				      <td class="name"></td>
 				      <td class="strategy"></td>
+				      <td class="points"></td>
 				    </tr>
 				  </tbody>
 			</table>
 		</div>
-		
-    </div>
-    <div id="champions" class="tab-pane fade">
-      	<h3 th:text="#{label.game.champions}"></h3>
-      	<div class="tournamentTitle">
-      		<h2 th:text="#{label.game.tournament}"></h2>
-      		<button type="submit" class="btn btn-default" id="newTournament" th:text="#{label.game.newTournament}"></button>
-      	</div>
-		<form class="form-inline" id="tournamentForm">
-			<h3 class="numPlayer" th:text="#{label.game.player1}"></h3>
-    		<div class="form-group">
-				<label for="name" th:text="#{label.game.name}"></label>
-				<input type="text" id="name"  class="form-control" data-icon="false" data-placeholder="Name" />
-			</div>
-			<div class="form-group">
-				<label for="name" th:text="#{label.game.strategy}"></label>	
-				<input type="text" id="strategy" class="form-control" data-icon="false" data-placeholder="Strategy"/>
-			</div>
-			<button type="submit" class="btn btn-default" id="addPlayer" th:text="#{label.game.addPlayer}"></button>
-		</form>	
-		<div>
-			<button type="submit" class="btn btn-default" id="game" th:text="#{label.game.game}"></button>
-		</div>
 	</div>
     <div id="file" class="tab-pane fade">
-    	<h3 th:text="#{label.game.file}"></h3>
+    	<h3 class="titleGame" th:text="#{label.game.file}"></h3>
       	<div class="col-md-4">
 			<input type="file" class="filestyle" data-icon="false"
 					data-placeholder="No file" /><br />

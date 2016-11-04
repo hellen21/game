@@ -81,7 +81,7 @@ public class HomeController{
 		if(listPlayers.size()>0){
 			 for(int i = 0; i < listPlayers.size(); i++){
 				// System.out.print(listPlayers.elementAt(i)+"\t");
-				 List<Player> temp = listPlayers.elementAt(i);
+				 ArrayList<Player> temp = listPlayers.elementAt(i);
 				 if(temp.size()==2){
 					 if(wsClientUtilities.validateStrategy(temp)){
 						 Player winPlayer = wsClientUtilities.searchWin(temp);
@@ -133,38 +133,102 @@ public class HomeController{
 				 return winPlayer;
 			 }
 			 else{
-				 return "la estrategia de algun jugador es erronea";
+				 return "A player's strategy is wrong";
 			 }
 		}
-		return "la estrategia de algun jugador es erronea";
+		return "A player's strategy is wrong";
 	}
 	
 	@RequestMapping(value = WIN_CHAMPIONS_PLAYER, method = RequestMethod.POST)
 	public @ResponseBody Object winChampionsGame(HttpServletResponse response,HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException{
+		
+		ArrayList<Player> tempPlayer = new ArrayList<Player>();
+		ArrayList<Player> tempChampions = new ArrayList<Player>();
 		ObjectMapper mapper = new ObjectMapper();	
 		
-		String[] simpleValues = request.getParameterValues("simple"); 
 		String[] tournamentValues = request.getParameterValues("tournament"); 
 		String[] championsValue = request.getParameterValues("champions"); 
-		Object championsValuea = mapper.readValue(championsValue[0], Object.class); 
-		ArrayList<Player> listPla = (ArrayList<Player>) championsValuea;
-		wsClientUtilities.validateStrategy(listPla);
-/*		tournamentValues.re
-		Player[] tournamentValuesotr = mapper.readValue(tournamentValues[0], Player[].class); */
-/*		Player[] tournamentValues = mapper.readValue(tournament, Player[].class);
-		Player[] championsValues = mapper.readValue(champions, Player[].class);  */
-/*		String[] pa= tournament;*/
-//		Player[] listSimpleGame = mapper.readValue(parameterValues[0], Player[].class);
-//		if (listSimpleGame != null) {
-//			if(wsClientUtilities.validateStrategy(listSimpleGame)){
-//				 Player winPlayer = wsClientUtilities.searchWin(listSimpleGame);
-//				 return winPlayer;
-//			 }
-//			 else{
-//				 return "la estrategia de algun jugador es erronea";
-//			 }
-//		}
-		return "la estrategia de algun jugador es erronea";
+		if(tournamentValues.length != 0){
+			try {
+				Player[][] tournamentList = mapper.readValue(tournamentValues[0], Player[][].class); 
+				if(tournamentList.length != 0){
+					for(int x = 0; x < tournamentList.length; x++){
+						Player[] playerTemp = tournamentList[x];
+						if(wsClientUtilities.validateStrategy(playerTemp)){
+							 Player winPlayer = wsClientUtilities.searchWin(playerTemp);
+							 if(tournamentList.length==1){
+								 return winPlayer;
+							 }
+							 tempPlayer.add(winPlayer);
+						 }
+						 else{
+							 return "A player's strategy is wrong";
+						 }
+					}
+				}
+				if(tempPlayer.size()==2){
+					 if(wsClientUtilities.validateStrategy(tempPlayer)){
+						 Player winPlayer = wsClientUtilities.searchWin(tempPlayer);
+						 return winPlayer;
+					 }
+					 else{
+						 System.out.println("A player's strategy is wrong");
+					 }
+				}
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			
+		}
+		if(championsValue.length != 0){
+			Player[][][] championsList = mapper.readValue(championsValue[0], Player[][][].class);
+			if(championsList.length != 1){
+				for(int x = 0; x < championsList.length; x++){
+					Player[][] playerTemp1 = championsList[x];
+					if(playerTemp1.length != 0){
+						for(int i = 0; i < playerTemp1.length; i++){
+							Player[] playerTemp = playerTemp1[i];
+							if(wsClientUtilities.validateStrategy(playerTemp)){
+								 Player winPlayer = wsClientUtilities.searchWin(playerTemp);
+								 tempPlayer.add(winPlayer);
+							 }
+							 else{
+								 return "A player's strategy is wrong";
+							 }
+						}
+					}
+				}
+			}
+			for(int y = 0; y < tempPlayer.size();y+=2){
+				int cont = y+1;
+				Player[] players = new Player[2]; 
+				players[0] = tempPlayer.get(y);
+				players[1] = tempPlayer.get(cont);
+				if(wsClientUtilities.validateStrategy(players)){
+					 Player winPlayer = wsClientUtilities.searchWin(players);
+					 tempChampions.add(winPlayer);
+				 }
+				 else{
+					 return "A player's strategy is wrong";
+				 }
+			}
+			if(tempChampions.size()==2){
+				 if(wsClientUtilities.validateStrategy(tempChampions)){
+					 Player winPlayer = wsClientUtilities.searchWin(tempChampions);
+					 return winPlayer;
+				 }
+				 else{
+					 System.out.println("A player's strategy is wrong");
+				 }
+			}
+			
+		} 
+
+		
+		
+
+		return "A player's strategy is wrong";
 	}
 }
 

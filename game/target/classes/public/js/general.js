@@ -1,6 +1,7 @@
 var listPlayerSimple = [];
 var tournament = [];
 var championship = [];
+var listWinners = [];
 var numTournament = 1;
 window.addEventListener('load', inicio, false);
 
@@ -39,12 +40,16 @@ window.addEventListener('load', inicio, false);
     $('#simple #addPlayer').click(function(evt){
     	evt.preventDefault();
     	var isTwoPlayer = addPlayerSimple('#simple');
+    	if(isTwoPlayer == undefined){
+    		return;
+    	}
     	if(!isTwoPlayer){
     		$('.numPlayer').text('Player 2');
-    		$('#simpleForm').trigger('reset')
-    	
+    		$('#simpleForm').trigger('reset');
+    		$('#addPlayer').text('Play');
     		return
     	}
+    	
     	var listPlayerSimpleString = JSON.stringify(listPlayerSimple);
     	$.ajax({
 			url:MM_CONTEXT_PATH +"winPlayer",
@@ -52,6 +57,7 @@ window.addEventListener('load', inicio, false);
 			dataType: 'JSON',
 			data: 'listPlayer='+listPlayerSimpleString,
 			success: function(data){
+				$('#addPlayer').text('Add Player');
 				if(typeof data == 'string'){
 					alert(data);
 				}else{
@@ -64,44 +70,89 @@ window.addEventListener('load', inicio, false);
 				
 			},
 			error: function(error){
-				alert("Error");
+				alert(error.responseText);
+				$('.numPlayer').text('Player 1');
+	    		$('#simpleForm').trigger('reset');
+	    		listPlayerSimple=[];
 			}})
     });
     $('#champions #game').click(function(evt){
     	evt.preventDefault();
+    	canGame = false;
+    	if(tournament.length != 0 ){
+    		if(tournament.length == 1 ){
+        		canGame = true;
+        	}else{
+        		if(tournament.length%2 == 0){
+        			canGame = true;
+        		}
+        	}
+    	}
+    	if(championship.length != 0){
+    		if(championship.length == 1 ){
+        		canGame = true;
+        	}else{
+        		if(championship.length%2 == 0){
+        			canGame = true;
+        		}
+        	}
+    	}
     	var listPlayerSimpleString = JSON.stringify(listPlayerSimple);
     	listPlayerSimple = [];
+    	if(championship.length > 0){
+    		if(0 < tournament.length){
+    			championship.push(tournament);
+    			tournament = [];
+    		}
+    	}
     	var data = 'simple=' + JSON.stringify(listPlayerSimple)+
     	'&tournament='+JSON.stringify(tournament)
     	+'&champions='+JSON.stringify(championship);
-    	
-    	$.ajax({
-			url:MM_CONTEXT_PATH +"winChampionsPlayer",
-			type: 'POST',
-			data: data,
-			beforeSend: function(xhr){
-				xhr.overrideMimeType('text/html; charset=iso-8859-1');
-			},
-			success: function(data){
-				if(typeof data == 'string'){
-					alert(data);
-				}else{
-					$('.numPlayer').text('Player 1');
-		    		$('#simpleForm').trigger('reset');
-		    		listPlayerSimple=[];
-					$('.table td.name').text(data.name);
-					$('.table td.strategy').text(data.strategy);
-				}
-				
-			},
-			error: function(error){
-				alert("Error");
-			}})
+    	if(canGame){
+    		$.ajax({
+    			url:MM_CONTEXT_PATH +"winChampionsPlayer",
+    			type: 'POST',
+    			data: data,
+    			dataType: 'JSON',
+    			beforeSend: function(xhr){
+    				xhr.overrideMimeType('text/html; charset=iso-8859-1');
+    			},
+    			success: function(data){
+    				if(typeof data == 'string'){
+    					alert(data);
+    				}else{
+    					$('.numPlayer').text('Player 1');
+    		    		$('#simpleForm').trigger('reset');
+    		    		listPlayerSimple = [];
+    		    		tournament = [];
+    		    		championship = [];
+    					$('.table td.name').text(data.name);
+    					$('.table td.strategy').text(data.strategy);
+    				}
+    				
+    			},
+    			error: function(error){
+    				alert(error.responseText);
+    			}})
+    	}else{
+    		alert('Please, Verify the data');
+    		$('.numPlayer').text('Player 1');
+        	$('#tournamentForm').trigger('reset');
+        	$('h2').text('Tournament ' + 1);
+    	}
+    
     });
     
     $('#champions #addPlayer').click(function(evt){
     	evt.preventDefault();
+    	if(tournament.length == 2){
+    		alert('Only supports two items, please play or add another tournament');
+    		return;
+    	}
     	var isTwoPlayer = addPlayerSimple('#champions');
+    	if(isTwoPlayer == undefined){
+    		return;
+    	}
     	if(listPlayerSimple.length == 2){
     		tournament.push(listPlayerSimple);
     		listPlayerSimple = [];
@@ -118,22 +169,28 @@ window.addEventListener('load', inicio, false);
     
     $('#newTournament').click(function(evt){
     	evt.preventDefault();
-    	$('.numPlayer').text('Player 1');
-    	$('#tournamentForm').trigger('reset');
-    	$('h2').text('Tournament ' + ++numTournament);
     	if(tournament.length == 0){
-    		alert('Debe haber almenos un torneo');
+    		alert('It must have at least one tournament');
     	}else{
+    		$('.numPlayer').text('Player 1');
+        	$('#tournamentForm').trigger('reset');
+        	$('h2').text('Tournament ' + ++numTournament);
     		championship.push(tournament);
     		tournament = [];
     		listPlayerSimple = [];
     	}
+    
+    	
     
     });
     
     function addPlayerSimple(formSelect){
     	var name = $(formSelect+' #name').val();
     	var strategy = $(formSelect+' #strategy').val();
+    	if(name == "" || strategy == ""){
+    		alert('Fields are required');
+    		return;
+    	}
     	var player={"name":name,"strategy":strategy};
     	listPlayerSimple.push(player);
     	if(listPlayerSimple.length === 2){

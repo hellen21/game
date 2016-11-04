@@ -23,19 +23,19 @@ public class WsClientUtilitiesImpl implements WsClientUtilities {
 	public Player searchWin(List<Player> players) {
 		String strategyPlayer1 = players.get(0).getStrategy();
 		String strategyPlayer2 = players.get(1).getStrategy();
-		if (strategyPlayer1.equals(strategyPlayer2)) {
+		if (strategyPlayer1.equalsIgnoreCase(strategyPlayer2)) {
 			return players.get(0);
-		} else if (strategyPlayer1.equals(Constant.ROCK) && strategyPlayer2.equals(Constant.PAPER)) {
+		} else if (strategyPlayer1.equalsIgnoreCase(Constant.ROCK) && strategyPlayer2.equalsIgnoreCase(Constant.PAPER)) {
 			return players.get(1);
-		} else if (strategyPlayer1.equals(Constant.ROCK) && strategyPlayer2.equals(Constant.SCISSORS)) {
+		} else if (strategyPlayer1.equalsIgnoreCase(Constant.ROCK) && strategyPlayer2.equalsIgnoreCase(Constant.SCISSORS)) {
 			return players.get(0);
-		} else if (strategyPlayer1.equals(Constant.PAPER) && strategyPlayer2.equals(Constant.SCISSORS)) {
+		} else if (strategyPlayer1.equalsIgnoreCase(Constant.PAPER) && strategyPlayer2.equalsIgnoreCase(Constant.SCISSORS)) {
 			return players.get(1);
-		} else if (strategyPlayer1.equals(Constant.PAPER) && strategyPlayer2.equals(Constant.ROCK)) {
+		} else if (strategyPlayer1.equalsIgnoreCase(Constant.PAPER) && strategyPlayer2.equalsIgnoreCase(Constant.ROCK)) {
 			return players.get(0);
-		} else if (strategyPlayer1.equals(Constant.SCISSORS) && strategyPlayer2.equals(Constant.ROCK)) {
+		} else if (strategyPlayer1.equalsIgnoreCase(Constant.SCISSORS) && strategyPlayer2.equalsIgnoreCase(Constant.ROCK)) {
 			return players.get(1);
-		} else if (strategyPlayer1.equals(Constant.SCISSORS) && strategyPlayer2.equals(Constant.PAPER)) {
+		} else if (strategyPlayer1.equalsIgnoreCase(Constant.SCISSORS) && strategyPlayer2.equalsIgnoreCase(Constant.PAPER)) {
 			return players.get(0);
 		}
 		return null;
@@ -44,26 +44,26 @@ public class WsClientUtilitiesImpl implements WsClientUtilities {
 	public Player searchWin(Player[] players) {
 		String strategyPlayer1 = players[0].getStrategy();
 		String strategyPlayer2 = players[1].getStrategy();
-		if (strategyPlayer1.equals(strategyPlayer2)) {
+		if (strategyPlayer1.equalsIgnoreCase(strategyPlayer2)) {
 			return players[0];
-		} else if (strategyPlayer1.equals(Constant.ROCK) && strategyPlayer2.equals(Constant.PAPER)) {
+		} else if (strategyPlayer1.equalsIgnoreCase(Constant.ROCK) && strategyPlayer2.equalsIgnoreCase(Constant.PAPER)) {
 			return players[1];
-		} else if (strategyPlayer1.equals(Constant.ROCK) && strategyPlayer2.equals(Constant.SCISSORS)) {
+		} else if (strategyPlayer1.equalsIgnoreCase(Constant.ROCK) && strategyPlayer2.equalsIgnoreCase(Constant.SCISSORS)) {
 			return players[0];
-		} else if (strategyPlayer1.equals(Constant.PAPER) && strategyPlayer2.equals(Constant.SCISSORS)) {
+		} else if (strategyPlayer1.equalsIgnoreCase(Constant.PAPER) && strategyPlayer2.equalsIgnoreCase(Constant.SCISSORS)) {
 			return players[1];
-		} else if (strategyPlayer1.equals(Constant.PAPER) && strategyPlayer2.equals(Constant.ROCK)) {
+		} else if (strategyPlayer1.equalsIgnoreCase(Constant.PAPER) && strategyPlayer2.equalsIgnoreCase(Constant.ROCK)) {
 			return players[0];
-		} else if (strategyPlayer1.equals(Constant.SCISSORS) && strategyPlayer2.equals(Constant.ROCK)) {
+		} else if (strategyPlayer1.equalsIgnoreCase(Constant.SCISSORS) && strategyPlayer2.equalsIgnoreCase(Constant.ROCK)) {
 			return players[1];
-		} else if (strategyPlayer1.equals(Constant.SCISSORS) && strategyPlayer2.equals(Constant.PAPER)) {
+		} else if (strategyPlayer1.equalsIgnoreCase(Constant.SCISSORS) && strategyPlayer2.equalsIgnoreCase(Constant.PAPER)) {
 			return players[0];
 		}
 		return null;
 	}
-	public boolean validateStrategy(List<Player> players) {
+	public boolean validateStrategy(ArrayList<Player> players) {
 		for (Player player : players) {
-			if (player.getStrategy().equals(Constant.SCISSORS) || player.getStrategy().equals(Constant.ROCK)
+			if (player.getStrategy().equalsIgnoreCase(Constant.SCISSORS) || player.getStrategy().equalsIgnoreCase(Constant.ROCK)
 					|| player.getStrategy().equals(Constant.PAPER)) {
 			} else {
 				return false;
@@ -74,7 +74,7 @@ public class WsClientUtilitiesImpl implements WsClientUtilities {
 
 	public boolean validateStrategy(Player[] players) {
 		for (Player player : players) {
-			if (player.getStrategy().equals(Constant.SCISSORS) || player.getStrategy().equals(Constant.ROCK)
+			if (player.getStrategy().equalsIgnoreCase(Constant.SCISSORS) || player.getStrategy().equalsIgnoreCase(Constant.ROCK)
 					|| player.getStrategy().equals(Constant.PAPER)) {
 			} else {
 				return false;
@@ -95,7 +95,7 @@ public class WsClientUtilitiesImpl implements WsClientUtilities {
 				if (champions.size() > 0) {
 					for (int i = 0; i < champions.size(); i++) {
 						// System.out.print(listPlayers.elementAt(i)+"\t");
-						List<Player> temp = champions.elementAt(i);
+						ArrayList<Player> temp = champions.elementAt(i);
 						if (temp.size() == 2) {
 							System.out.println("Jugador 1 " + temp.get(0).getName() + " con la estrategia de juego " + temp.get(0).getStrategy());
 							System.out.println("Jugador 2 " + temp.get(1).getName() + " con la estrategia de juego " + temp.get(1).getStrategy()); 

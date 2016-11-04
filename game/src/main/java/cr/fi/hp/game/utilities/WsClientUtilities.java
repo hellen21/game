@@ -17,7 +17,7 @@ import cr.fi.hp.game.entities.Player;
 public interface WsClientUtilities {	
 
 	public Player searchWin(List<Player> players);
-	public boolean validateStrategy(List<Player> players);
+	public boolean validateStrategy(ArrayList<Player> players);
 	public Player searchWinChampions(ArrayList<Championship> listChampions);
 	public boolean validateStrategy(Player[] players);
 	public Player searchWin(Player[] players);

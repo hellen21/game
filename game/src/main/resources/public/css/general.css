@@ -1,4 +1,6 @@
-
+body{
+	    background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgb(66, 139, 202) 0%, rgb(182, 200, 208) , rgb(255, 255, 255))no-repeat center center fixed;
+}
 
 .container.body {
 	top: 50px;
@@ -9,4 +11,16 @@
     position: absolute;
     left: 30%;
     margin-top: -40px;
+}
+button#addPlayer, button#game {
+    margin-top: 15px;
+}
+.colorWhite {
+    background: rgb(255, 255, 255);
+    border-radius: 10px;
+    padding: 0px 20px 40px;
+}
+.titleGame{
+	text-align: center;
+	margin-bottom: 30px;
 }
