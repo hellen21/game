@@ -147,4 +147,31 @@ public class WsClientUtilitiesImpl implements WsClientUtilities {
 		
 	}
 
+	
+	public Object functionRecursive(ArrayList<Player> playersList){
+		
+		ArrayList<Player> tempChampions = new ArrayList<Player>();
+		if(playersList.size()==1){
+			return playersList.get(0);
+		}else{
+			tempChampions = searchWinners(playersList);
+			return functionRecursive(tempChampions);
+		}	
+	}
+	
+	public ArrayList<Player> searchWinners(ArrayList<Player> playersList){
+		ArrayList<Player> tempChampions = new ArrayList<Player>();
+		for(int y = 0; y < playersList.size();y+=2){
+			int cont = y+1;
+			Player[] players = new Player[2]; 
+			players[0] = playersList.get(y);
+			players[1] = playersList.get(cont);
+			if(validateStrategy(players)){
+				 Player winPlayer = searchWin(players);
+				 tempChampions.add(winPlayer);
+			 }
+		}
+		return tempChampions;
+	}
+	
 }

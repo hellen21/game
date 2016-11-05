@@ -145,10 +145,10 @@ window.addEventListener('load', inicio, false);
     
     $('#champions #addPlayer').click(function(evt){
     	evt.preventDefault();
-    	if(tournament.length == 2){
-    		alert('Only supports two items, please play or add another tournament');
-    		return;
-    	}
+//    	if(tournament.length == 2){
+//    		alert('Only supports two items, please play or add another tournament');
+//    		return;
+//    	}
     	var isTwoPlayer = addPlayerSimple('#champions');
     	if(isTwoPlayer == undefined){
     		return;

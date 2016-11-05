@@ -104,8 +104,9 @@ public class HomeController{
 		
 		ObjectMapper mapper = new ObjectMapper();	
 		String parameterValues = request.getParameter("text"); 
-		Object listSimpleGame = mapper.readValue(parameterValues, Object[].class);
-		ArrayList<Player> ls = (ArrayList<Player>) listSimpleGame;
+		Object[] listSimpleGame = mapper.readValue(parameterValues, Object[].class);
+//		ArrayList<Player> ls = (ArrayList<Player>) listSimpleGame;
+		Player[][] prueba = (Player[][]) listSimpleGame;
 		System.out.println(text);
 		
 	    return true;
@@ -133,10 +134,12 @@ public class HomeController{
 		
 		ArrayList<Player> tempPlayer = new ArrayList<Player>();
 		ArrayList<Player> tempChampions = new ArrayList<Player>();
+		
 		ObjectMapper mapper = new ObjectMapper();	
 		
 		String[] tournamentValues = request.getParameterValues("tournament"); 
 		String[] championsValue = request.getParameterValues("champions"); 
+		
 		if(tournamentValues.length != 0){
 			try {
 				Player[][] tournamentList = mapper.readValue(tournamentValues[0], Player[][].class); 
@@ -164,6 +167,12 @@ public class HomeController{
 						 System.out.println("A player's strategy is wrong");
 					 }
 				}
+				else{
+					if(tempPlayer.size() != 0){
+						return wsClientUtilities.functionRecursive(tempPlayer);
+					}
+					
+				}
 				
 			} catch (Exception e) {
 				// TODO: handle exception
@@ -189,19 +198,7 @@ public class HomeController{
 					}
 				}
 			}
-			for(int y = 0; y < tempPlayer.size();y+=2){
-				int cont = y+1;
-				Player[] players = new Player[2]; 
-				players[0] = tempPlayer.get(y);
-				players[1] = tempPlayer.get(cont);
-				if(wsClientUtilities.validateStrategy(players)){
-					 Player winPlayer = wsClientUtilities.searchWin(players);
-					 tempChampions.add(winPlayer);
-				 }
-				 else{
-					 return "A player's strategy is wrong";
-				 }
-			}
+			tempChampions = wsClientUtilities.searchWinners(tempPlayer);
 			if(tempChampions.size()==2){
 				 if(wsClientUtilities.validateStrategy(tempChampions)){
 					 Player winPlayer = wsClientUtilities.searchWin(tempChampions);
@@ -210,13 +207,11 @@ public class HomeController{
 				 else{
 					 System.out.println("A player's strategy is wrong");
 				 }
+			}else{
+				return wsClientUtilities.functionRecursive(tempChampions);
 			}
 			
 		} 
-
-		
-		
-
 		return "A player's strategy is wrong";
 	}
 }

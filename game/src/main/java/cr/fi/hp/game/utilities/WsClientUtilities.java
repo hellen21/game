@@ -15,4 +15,7 @@ public interface WsClientUtilities {
 	public Player searchWinChampions(ArrayList<Championship> listChampions);
 	public boolean validateStrategy(Player[] players);
 	public Player searchWin(Player[] players);
+	public Object functionRecursive(ArrayList<Player> playersList);
+	public ArrayList<Player> searchWinners(ArrayList<Player> playersList);
+
 }
