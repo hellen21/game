@@ -3,6 +3,7 @@ var tournament = [];
 var championship = [];
 var listWinners = [];
 var numTournament = 1;
+var listPlayers = [];
 window.addEventListener('load', inicio, false);
 
     function inicio() {
@@ -66,6 +67,14 @@ window.addEventListener('load', inicio, false);
 		    		listPlayerSimple=[];
 					$('.table td.name').text(data.name);
 					$('.table td.strategy').text(data.strategy);
+					
+					var player={"name":data.name,"points":3};
+					if(listPlayers.length == 0){
+						listPlayers.push(player);
+						$('.table td.points').text(3);
+					}else{
+						$('.table td.points').text(addPoints(player));
+					}
 				}
 				
 			},
@@ -128,6 +137,13 @@ window.addEventListener('load', inicio, false);
     		    		championship = [];
     					$('.table td.name').text(data.name);
     					$('.table td.strategy').text(data.strategy);
+    					var player={"name":data.name,"points":3};
+    					if(listPlayers.length == 0){
+    						listPlayers.push(player);
+    						$('.table td.points').text(3);
+    					}else{
+    						$('.table td.points').text(addPoints(player));
+    					}
     				}
     				
     			},
@@ -206,5 +222,20 @@ window.addEventListener('load', inicio, false);
     	var strategy = $(formSelect+' #strategy').val();
     	var player={"name":name,"strategy":strategy};
     	tournament1.push(player);
+    }
+    
+    function addPoints(player){
+    	var exist = false;
+    	for(var x = 0; x < listPlayers.length; x++ ){
+    		if(listPlayers[x].name == player.name){
+    			listPlayers[x].points = listPlayers[x].points + 3;
+    			exist = true;
+    			return listPlayers[x].points;
+    		}
+    	}
+    	if(!exist){
+    		listPlayers.push(player)
+    		return player.points;
+    	}
     }
     
