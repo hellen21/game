@@ -6,7 +6,7 @@
 	<groupId>cr.fi.hp</groupId>
 	<artifactId>game</artifactId>
 	<version>2.5.1</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -128,7 +128,6 @@
 			<groupId>org.springframework.mobile</groupId>
 			<artifactId>spring-mobile-device</artifactId>
 		</dependency>
-
 	</dependencies>
 
 
@@ -140,11 +139,9 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
-					<packagingIncludes>WEB-INF/lib/A.jar, WEB-INF/lib/B.jar</packagingIncludes>
-				</configuration>
+				<groupId>com.heroku.sdk</groupId>
+				<artifactId>heroku-maven-plugin</artifactId>
+				<version>1.1.2</version>
 			</plugin>
 		</plugins>
 	</build>
