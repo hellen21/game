@@ -128,6 +128,7 @@
 			<groupId>org.springframework.mobile</groupId>
 			<artifactId>spring-mobile-device</artifactId>
 		</dependency>
+
 	</dependencies>
 
 
@@ -139,32 +140,12 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>com.heroku.sdk</groupId>
-				<artifactId>heroku-maven-plugin</artifactId>
-				<version>1.1.2</version>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+					<packagingIncludes>WEB-INF/lib/A.jar, WEB-INF/lib/B.jar</packagingIncludes>
+				</configuration>
 			</plugin>
-			<plugin>
-                  <artifactId>maven-clean-plugin</artifactId>
-                  <version>2.5</version>
-                  <executions>
-                    <execution>
-                      <id>clean-jar-artifacts</id>
-                      <phase>install</phase>
-                      <goals><goal>clean</goal></goals>
-                      <configuration>
-                        <excludeDefaultDirectories>true</excludeDefaultDirectories>
-                        <filesets>
-                          <fileset>
-                              <directory>target</directory>
-                              <excludes>
-                                <exclude>*.war</exclude>
-                              </excludes>
-                          </fileset>
-                        </filesets>
-                      </configuration>
-                    </execution>
-                  </executions>
-                </plugin>
 		</plugins>
 	</build>
 
